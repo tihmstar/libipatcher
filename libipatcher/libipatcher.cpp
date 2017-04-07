@@ -14,12 +14,16 @@
 #include <functional>
 extern "C" {
 #include "jssy.h"
+#include <xpwn/libxpwn.h>
+#include <xpwn/pwnutil.h>
+#include <xpwn/nor_files.h>
 }
 
 
 #define FIRMWARE_JSON_URL_START "https://firmware-keys.ipsw.me/firmware/"
 #define reterror(err) throw exception(__LINE__,err)
 #define assure(cond) if ((cond) == 0) throw exception(__LINE__)
+#define retassure(err,cond) if ((cond) == 0) throw exception(__LINE__,err)
 
 namespace libipatcher {
     namespace helpers {
@@ -61,18 +65,30 @@ namespace libipatcher {
         public:
             T p;
             ptr_smart(T pp, std::function<void(T)> ptr_free) : p(pp) {static_assert(std::is_pointer<T>(), "error: this is for pointers only\n"); _ptr_free = ptr_free;}
-            ptr_smart(T pp) : p(pp){}
-            ptr_smart() : p(NULL) {}
+            ptr_smart(T pp) {p = pp;}
+            ptr_smart() {p = NULL;}
             T operator=(T pp) {return p = pp;}
-            T *operator&(){return &p;}
-            ~ptr_smart(){if (p) (_ptr_free) ? _ptr_free(p) : free((void*)p);}
+            T *operator&() {return &p;}
+            ~ptr_smart() {if (p) (_ptr_free) ? _ptr_free(p) : free((void*)p);}
         };
+        
+        class AbstractFile_smart{
+        public:
+            AbstractFile* p;
+            AbstractFile_smart() {p = NULL;};
+            AbstractFile_smart(AbstractFile *pp) {p = pp;};
+            AbstractFile* operator=(AbstractFile* pp) {return p = pp;}
+            AbstractFile* *operator&() {return &p;}
+            ~AbstractFile_smart() {if (p) p->close(p),p = NULL;};
+        };
+        
     }
     std::string getFirmwareJson(const std::string &device, const std::string &buildnum);
+    std::pair<char*,size_t>patchfile(char *ibss, size_t ibssSize, const fw_key &keys, const std::string &findstr, std::function<void(char *, size_t)> patchfunc);
 }
 using namespace std;
 using namespace libipatcher;
-using helpers::ptr_smart;
+using namespace helpers;
 
 string libipatcher::getFirmwareJson(const std::string &device, const std::string &buildnum){
     string buf;
@@ -124,10 +140,62 @@ fw_key libipatcher::getFirmwareKey(const std::string &device, const std::string 
     });
     assure(iv && key);
     
-    assure(!helpers::parseHex(iv->value, iv->size, (unsigned char*)&rt.iv, sizeof(rt.iv)));
-    assure(!helpers::parseHex(key->value, key->size, (unsigned char*)&rt.key, sizeof(rt.key)));
+    assure(iv->size <= sizeof(rt.iv));
+    assure(key->size <= sizeof(rt.key));
+    memcpy(rt.iv, iv->value, iv->size);
+    memcpy(rt.key, key->value, key->size);
+    rt.iv[sizeof(rt.iv)-1] = 0;
+    rt.key[sizeof(rt.key)-1] = 0;
     
     return rt;
+}
+
+pair<char*,size_t>libipatcher::patchfile(char *ibss, size_t ibssSize, const fw_key &keys, const string&findstr, function<void(char *, size_t)> patchfunc){
+    TestByteOrder();
+    char *decibss = NULL;
+    size_t decibssSize = 0;
+    ptr_smart<unsigned int *>key;
+    ptr_smart<unsigned int *>iv;
+    AbstractFile *afibss;
+    char *patched = NULL;
+    size_t patchedSize = 0;
+    AbstractFile *enc = NULL;
+    
+    size_t bytes;
+    hexToInts(keys.iv, &iv, &bytes);
+    assure(bytes == 16);
+    hexToInts(keys.key, &key, &bytes);
+    assure(bytes == 32);
+    
+    
+    assure(afibss = openAbstractFile2(enc = createAbstractFileFromMemoryFile((void**)&ibss, &ibssSize), key.p, iv.p));
+    assure(decibssSize = afibss->getLength(afibss));
+    assure(decibss = (char*)malloc(decibssSize));
+    assure(afibss->read(afibss,decibss, decibssSize) == decibssSize);
+    
+    assure(*decibss != '3' && memmem(decibss, decibssSize, findstr.c_str() , findstr.size()));
+    
+    //patch here
+    patchfunc(decibss, decibssSize);
+    
+    //close file
+    assure(patched = (char*)malloc(1));
+    
+    AbstractFile_smart newFile = duplicateAbstractFile2(enc, createAbstractFileFromMemoryFile((void**)&patched, &patchedSize), NULL, NULL, NULL);
+    assure(newFile.p);
+    assure(newFile.p->write(newFile.p, decibss, decibssSize) == decibssSize);
+    newFile.p->close(newFile.p);
+    newFile = NULL;
+    
+    return pair<char*,size_t>{patched,patchedSize};
+}
+
+pair<char*,size_t>libipatcher::patchiBSS(char *ibss, size_t ibssSize, const fw_key &keys){
+    return patchfile(ibss, ibssSize, keys, "iBSS", [](char *decibss, size_t decibssSize){
+        
+        memcpy(decibss, "AAAAAAtestingpatch!!!!!AAAAAAAA", strlen("AAAAAAtestingpatch!!!!!AAAAAAAA"));
+    
+    });
 }
 
 

@@ -14,8 +14,8 @@
 
 namespace libipatcher {
     struct fw_key{
-        unsigned char iv[16];
-        unsigned char key[32];
+        char iv[32 + 1];
+        char key[64 + 1];
     };
     class exception : public std::exception{
         std::string _err;
@@ -29,6 +29,8 @@ namespace libipatcher {
     };
     
     fw_key getFirmwareKey(const std::string &device, const std::string &buildnum, const std::string &file);
+    
+    std::pair<char*,size_t>patchiBSS(char *ibss, size_t ibssSize, const fw_key &key);
     
 }
 
