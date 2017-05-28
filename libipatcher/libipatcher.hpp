@@ -30,7 +30,8 @@ namespace libipatcher {
     
     fw_key getFirmwareKey(const std::string &device, const std::string &buildnum, const std::string &file);
     
-    std::pair<char*,size_t>patchiBSS(char *ibss, size_t ibssSize, const fw_key &key);
+    std::pair<char*,size_t>patchiBSS(char *ibss, size_t ibssSize, const fw_key &keys);
+    std::pair<char*,size_t>patchiBEC(char *ibec, size_t ibecSize, const fw_key &keys);
     
 }
 
