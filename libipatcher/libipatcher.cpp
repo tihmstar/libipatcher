@@ -17,7 +17,6 @@ extern "C" {
 #include <xpwn/libxpwn.h>
 #include <xpwn/pwnutil.h>
 #include <xpwn/nor_files.h>
-#include "patchfinder.h"
 #include <include/iBoot32Patcher.h>
 #include <include/functions.h>
 #include <include/patchers.h>

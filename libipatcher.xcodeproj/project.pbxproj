@@ -8,6 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		872C34731EDC491B00CFEB7A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 872C34721EDC491B00CFEB7A /* main.cpp */; };
+		876E2F0B1EDC4A5D00D5D374 /* libipatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F0A1EDC4A5D00D5D374 /* libipatcher.cpp */; };
+		876E2F0E1EDC4AE600D5D374 /* jssy.c in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F0C1EDC4AE600D5D374 /* jssy.c */; };
+		876E2F121EDC4BC300D5D374 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 876E2F111EDC4BC300D5D374 /* libcurl.tbd */; };
+		876E2F141EDC4BD200D5D374 /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 876E2F131EDC4BD200D5D374 /* libcommon.a */; };
+		876E2F161EDC4BDD00D5D374 /* libxpwn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 876E2F151EDC4BDD00D5D374 /* libxpwn.a */; };
+		876E2F181EDC4C1300D5D374 /* libpng16.16.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 876E2F171EDC4C1300D5D374 /* libpng16.16.dylib */; };
+		876E2F211EDC4CA400D5D374 /* finders.c in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F1E1EDC4CA400D5D374 /* finders.c */; };
+		876E2F221EDC4CA400D5D374 /* functions.c in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F1F1EDC4CA400D5D374 /* functions.c */; };
+		876E2F231EDC4CA400D5D374 /* patchers.c in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F201EDC4CA400D5D374 /* patchers.c */; };
+		876E2F271EDC4D9000D5D374 /* libcrypto.1.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 876E2F261EDC4D9000D5D374 /* libcrypto.1.0.0.dylib */; };
+		876E2F291EDC4DCB00D5D374 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 876E2F281EDC4DCB00D5D374 /* libz.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +36,21 @@
 /* Begin PBXFileReference section */
 		872C346F1EDC491B00CFEB7A /* libipatcher */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libipatcher; sourceTree = BUILT_PRODUCTS_DIR; };
 		872C34721EDC491B00CFEB7A /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		876E2F091EDC4A5D00D5D374 /* all_libipatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = all_libipatcher.h; sourceTree = "<group>"; };
+		876E2F0A1EDC4A5D00D5D374 /* libipatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = libipatcher.cpp; sourceTree = "<group>"; };
+		876E2F0C1EDC4AE600D5D374 /* jssy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jssy.c; path = external/jssy/jssy/jssy.c; sourceTree = SOURCE_ROOT; };
+		876E2F0D1EDC4AE600D5D374 /* jssy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jssy.h; path = external/jssy/jssy/jssy.h; sourceTree = SOURCE_ROOT; };
+		876E2F111EDC4BC300D5D374 /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
+		876E2F131EDC4BD200D5D374 /* libcommon.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcommon.a; path = ../../../../usr/local/lib/libcommon.a; sourceTree = "<group>"; };
+		876E2F151EDC4BDD00D5D374 /* libxpwn.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libxpwn.a; path = ../../../../usr/local/lib/libxpwn.a; sourceTree = "<group>"; };
+		876E2F171EDC4C1300D5D374 /* libpng16.16.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng16.16.dylib; path = ../../../../usr/local/Cellar/libpng/1.6.29/lib/libpng16.16.dylib; sourceTree = "<group>"; };
+		876E2F191EDC4C5000D5D374 /* libcorecrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcorecrypto.tbd; path = usr/lib/system/libcorecrypto.tbd; sourceTree = SDKROOT; };
+		876E2F1E1EDC4CA400D5D374 /* finders.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = finders.c; path = external/iBoot32Patcher/finders.c; sourceTree = SOURCE_ROOT; };
+		876E2F1F1EDC4CA400D5D374 /* functions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = functions.c; path = external/iBoot32Patcher/functions.c; sourceTree = SOURCE_ROOT; };
+		876E2F201EDC4CA400D5D374 /* patchers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = patchers.c; path = external/iBoot32Patcher/patchers.c; sourceTree = SOURCE_ROOT; };
+		876E2F241EDC4CF400D5D374 /* libcommonCrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcommonCrypto.tbd; path = usr/lib/system/libcommonCrypto.tbd; sourceTree = SDKROOT; };
+		876E2F261EDC4D9000D5D374 /* libcrypto.1.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.1.0.0.dylib; path = ../../../../usr/local/Cellar/openssl/1.0.2l/lib/libcrypto.1.0.0.dylib; sourceTree = "<group>"; };
+		876E2F281EDC4DCB00D5D374 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +58,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				876E2F291EDC4DCB00D5D374 /* libz.tbd in Frameworks */,
+				876E2F271EDC4D9000D5D374 /* libcrypto.1.0.0.dylib in Frameworks */,
+				876E2F181EDC4C1300D5D374 /* libpng16.16.dylib in Frameworks */,
+				876E2F161EDC4BDD00D5D374 /* libxpwn.a in Frameworks */,
+				876E2F141EDC4BD200D5D374 /* libcommon.a in Frameworks */,
+				876E2F121EDC4BC300D5D374 /* libcurl.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -43,6 +75,7 @@
 			children = (
 				872C34711EDC491B00CFEB7A /* libipatcher */,
 				872C34701EDC491B00CFEB7A /* Products */,
+				876E2F101EDC4BC300D5D374 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -57,9 +90,55 @@
 		872C34711EDC491B00CFEB7A /* libipatcher */ = {
 			isa = PBXGroup;
 			children = (
+				876E2F091EDC4A5D00D5D374 /* all_libipatcher.h */,
+				876E2F0F1EDC4AEA00D5D374 /* external */,
+				876E2F0A1EDC4A5D00D5D374 /* libipatcher.cpp */,
 				872C34721EDC491B00CFEB7A /* main.cpp */,
 			);
 			path = libipatcher;
+			sourceTree = "<group>";
+		};
+		876E2F0F1EDC4AEA00D5D374 /* external */ = {
+			isa = PBXGroup;
+			children = (
+				876E2F1D1EDC4C8E00D5D374 /* iBoot32Patcher */,
+				876E2F1B1EDC4C6900D5D374 /* jssy */,
+			);
+			name = external;
+			sourceTree = "<group>";
+		};
+		876E2F101EDC4BC300D5D374 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				876E2F281EDC4DCB00D5D374 /* libz.tbd */,
+				876E2F261EDC4D9000D5D374 /* libcrypto.1.0.0.dylib */,
+				876E2F241EDC4CF400D5D374 /* libcommonCrypto.tbd */,
+				876E2F191EDC4C5000D5D374 /* libcorecrypto.tbd */,
+				876E2F171EDC4C1300D5D374 /* libpng16.16.dylib */,
+				876E2F151EDC4BDD00D5D374 /* libxpwn.a */,
+				876E2F131EDC4BD200D5D374 /* libcommon.a */,
+				876E2F111EDC4BC300D5D374 /* libcurl.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		876E2F1B1EDC4C6900D5D374 /* jssy */ = {
+			isa = PBXGroup;
+			children = (
+				876E2F0D1EDC4AE600D5D374 /* jssy.h */,
+				876E2F0C1EDC4AE600D5D374 /* jssy.c */,
+			);
+			name = jssy;
+			sourceTree = "<group>";
+		};
+		876E2F1D1EDC4C8E00D5D374 /* iBoot32Patcher */ = {
+			isa = PBXGroup;
+			children = (
+				876E2F1E1EDC4CA400D5D374 /* finders.c */,
+				876E2F1F1EDC4CA400D5D374 /* functions.c */,
+				876E2F201EDC4CA400D5D374 /* patchers.c */,
+			);
+			name = iBoot32Patcher;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -120,6 +199,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				872C34731EDC491B00CFEB7A /* main.cpp in Sources */,
+				876E2F231EDC4CA400D5D374 /* patchers.c in Sources */,
+				876E2F211EDC4CA400D5D374 /* finders.c in Sources */,
+				876E2F221EDC4CA400D5D374 /* functions.c in Sources */,
+				876E2F0E1EDC4AE600D5D374 /* jssy.c in Sources */,
+				876E2F0B1EDC4A5D00D5D374 /* libipatcher.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,14 +302,30 @@
 		872C34771EDC491B00CFEB7A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/usr/local/Cellar/libpng/1.6.29/lib,
+					"$(SDKROOT)/usr/lib/system",
+					/usr/local/Cellar/openssl/1.0.2l/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/include $(SRCROOT)/external/iBoot32Patcher /usr/local/include /usr/local/opt/openssl/lib";
 			};
 			name = Debug;
 		};
 		872C34781EDC491B00CFEB7A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/usr/local/Cellar/libpng/1.6.29/lib,
+					"$(SDKROOT)/usr/lib/system",
+					/usr/local/Cellar/openssl/1.0.2l/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/include $(SRCROOT)/external/iBoot32Patcher /usr/local/include /usr/local/opt/openssl/lib";
 			};
 			name = Release;
 		};
@@ -248,6 +348,7 @@
 				872C34781EDC491B00CFEB7A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

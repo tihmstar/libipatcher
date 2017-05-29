@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <cstdlib>
-#include "libipatcher.hpp"
+#include <libipatcher/libipatcher.hpp>
 
 using namespace libipatcher;
 using namespace std;
