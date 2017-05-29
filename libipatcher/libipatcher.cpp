@@ -125,7 +125,16 @@ string libipatcher::getFirmwareJson(const std::string &device, const std::string
 }
 
 
-fw_key libipatcher::getFirmwareKey(const std::string &device, const std::string &buildnum, const std::string &file){
+fw_key libipatcher::getFirmwareKey(const std::string &device, const std::string &buildnum, std::string file){
+    if (file == "RestoreLogo")
+        file = "AppleLogo";
+    else if (file == "RestoreRamDisk")
+        file = "RestoreRamdisk";
+    else if (file == "RestoreDeviceTree")
+        file = "DeviceTree";
+    else if (file == "RestoreKernelCache")
+        file = "Kernelcache";
+    
     fw_key rt;
     ptr_smart<jssytok_t*> tokens = NULL;
     long tokensCnt = 0;
@@ -247,7 +256,9 @@ pair<char*,size_t>libipatcher::patchiBEC(char *ibec, size_t ibecSize, const libi
     return patchfile(ibec, ibecSize, keys, "iBEC", iBoot32Patch);
 }
 
-
+pair<char*,size_t>libipatcher::decryptFile(char *fbuf, size_t fbufSize, const libipatcher::fw_key &keys){
+    return patchfile(fbuf, fbufSize, keys, "", [](char*,size_t)->int{return 0;});
+}
 
 
 
