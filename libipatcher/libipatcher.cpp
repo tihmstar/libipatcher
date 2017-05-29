@@ -7,7 +7,7 @@
 //
 
 #include "all_libipatcher.h"
-#include "libipatcher.hpp"
+#include <libipatcher/libipatcher.hpp>
 #include <curl/curl.h>
 #include <cstdlib>
 #include <cstring>

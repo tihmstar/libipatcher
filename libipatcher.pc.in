@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libipatcher
+Description: A small C++ wrapper around iBoot32Patcher
+Version: 1.0
+Libs: -L${libdir} -lipatcher
+Cflags: -I${includedir}
