@@ -5,6 +5,6 @@ includedir=${prefix}/include
 
 Name: libipatcher
 Description: A small C++ wrapper around iBoot32Patcher
-Version: 1.0
+Version: LIBRARY_GIT_VERSION_NUM
 Libs: -L${libdir} -lipatcher -lcurl -lxpwn -lcommon -lpng -lz
 Cflags: -I${includedir}

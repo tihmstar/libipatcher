@@ -10,8 +10,8 @@
 #define all_libipatcher_h
 
 
-#define LIBIPATCHER_VERSION_COMMIT_COUNT "undefined version"
-#define LIBIPATCHER_VERSION_COMMIT_SHA "undefined commit"
+#define LIBIPATCHER_VERSION_COMMIT_COUNT "LIBRARY_GIT_VERSION_NUM"
+#define LIBIPATCHER_VERSION_COMMIT_SHA "LIBRARY_GIT_VERSION_SHA"
 
 
 #endif /* all_libipatcher_h */
