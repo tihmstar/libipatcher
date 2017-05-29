@@ -256,8 +256,40 @@ pair<char*,size_t>libipatcher::patchiBEC(char *ibec, size_t ibecSize, const libi
     return patchfile(ibec, ibecSize, keys, "iBEC", iBoot32Patch);
 }
 
-pair<char*,size_t>libipatcher::decryptFile(char *fbuf, size_t fbufSize, const libipatcher::fw_key &keys){
-    return patchfile(fbuf, fbufSize, keys, "", [](char*,size_t)->int{return 0;});
+pair<char*,size_t>libipatcher::decryptFile3(char *encfile, size_t encfileSize, const libipatcher::fw_key &keys){
+    TestByteOrder();
+    char *decibss = NULL;
+    size_t decibssSize = 0;
+    ptr_smart<unsigned int *>key;
+    ptr_smart<unsigned int *>iv;
+    AbstractFile *afibss;
+    char *patched = NULL;
+    size_t patchedSize = 0;
+    AbstractFile *enc = NULL;
+    
+    size_t bytes;
+    hexToInts(keys.iv, &iv, &bytes);
+    assure(bytes == 16);
+    hexToInts(keys.key, &key, &bytes);
+    assure(bytes == 32);
+    
+    assure(afibss = openAbstractFile3(enc = createAbstractFileFromMemoryFile((void**)&encfile, &encfileSize), key, iv, 0));
+    assure(decibssSize = afibss->getLength(afibss));
+    assure(decibss = (char*)malloc(decibssSize));
+    assure(afibss->read(afibss,decibss, decibssSize) == decibssSize);
+    
+    assure(*decibss != '3');
+    
+    //close file
+    assure(patched = (char*)malloc(1));
+    
+    AbstractFile_smart newFile = duplicateAbstractFile2(enc, createAbstractFileFromMemoryFile((void**)&patched, &patchedSize), NULL, NULL, NULL);
+    assure(newFile.p);
+    assure(newFile.p->write(newFile.p, decibss, decibssSize) == decibssSize);
+    newFile.p->close(newFile.p);
+    newFile = NULL;
+    
+    return pair<char*,size_t>{patched,patchedSize};
 }
 
 
