@@ -227,10 +227,11 @@ int iBoot32Patch(char *deciboot, size_t decibootSize){
     /* Check to see if the loader has a kernel load routine before trying to apply custom boot args + debug-enabled override. */
     if(has_kernel_load(&iboot_in)) {
         
-        /* Only bootloaders with the kernel load routines pass the DeviceTree. */
-        ret = patch_debug_enabled(&iboot_in);
+        ret = patch_ticket_check(&iboot_in);
+        
         if(!ret) {
-            printf("%s: Error doing patch_debug_enabled()!\n", __FUNCTION__);
+            printf("%s: Error doing patch_ticket_check()!\n", __FUNCTION__);
+            free(iboot_in.buf);
             return -1;
         }
     }
