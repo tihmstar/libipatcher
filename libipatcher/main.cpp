@@ -31,7 +31,7 @@ int main(int argc, const char * argv[]) {
 //        cout << "Error" << e.code() << " -- " << e.what() << endl;
 //    }
     try {
-        kibec = getFirmwareKey("iPhone4,1", "10B329", "iBEC");
+        kibec = getFirmwareKey("iPhone4,1", "11D257", "iBEC");
     } catch (libipatcher::exception &e) {
         cout << "Error" << e.code() << " -- " << e.what() << endl;
     }
