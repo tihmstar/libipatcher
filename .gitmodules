@@ -3,4 +3,4 @@
 	url = https://github.com/tihmstar/jssy
 [submodule "external/iBoot32Patcher"]
 	path = external/iBoot32Patcher
-	url = https://github.com/iH8sn0w/iBoot32Patcher.git
+	url = https://github.com/tihmstar/iBoot32Patcher.git
