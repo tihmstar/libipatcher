@@ -24,7 +24,7 @@ int main(int argc, const char * argv[]) {
     size_t ibssSize = 0;
     size_t ibecSize = 0;
     size_t logoSize = 0;
-    
+    cout << libipatcher::version()<<endl;
 //    try {
 //        kibss = getFirmwareKey("iPhone4,1", "10B329", "iBSS");
 //    } catch (libipatcher::exception &e) {
@@ -65,6 +65,6 @@ int main(int argc, const char * argv[]) {
     auto patchediBEC = patchiBEC(ibec, ibecSize, kibec);
     
     free(ibec);
-    cout << "done"<<endl;
+    cout << "done "<<endl;
     return 0;
 }

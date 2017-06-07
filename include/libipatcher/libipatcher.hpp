@@ -34,6 +34,7 @@ namespace libipatcher {
     std::pair<char*,size_t>patchiBSS(char *ibss, size_t ibssSize, const fw_key &keys);
     std::pair<char*,size_t>patchiBEC(char *ibec, size_t ibecSize, const fw_key &keys);
     
+    std::string version();
 }
 
 #endif /* libipatcher_hpp */

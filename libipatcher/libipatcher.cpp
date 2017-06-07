@@ -101,6 +101,10 @@ using namespace std;
 using namespace libipatcher;
 using namespace helpers;
 
+string libipatcher::version(){
+    return {"Libipatcher Version: " LIBIPATCHER_VERSION_COMMIT_SHA " - " LIBIPATCHER_VERSION_COMMIT_COUNT};
+}
+
 string libipatcher::getFirmwareJson(const std::string &device, const std::string &buildnum){
     string buf;
     CURL *mc = curl_easy_init();
