@@ -15,6 +15,7 @@ AC_PROG_CC
 AC_CONFIG_MACRO_DIRS([m4])
 
 # Checks for libraries.
+PKG_CHECK_MODULES(libpng, libpng >= 1.2.0)
 
 # Checks for header files.
 AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h string.h])

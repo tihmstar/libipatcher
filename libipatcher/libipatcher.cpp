@@ -13,6 +13,7 @@
 #include <cstring>
 #include <functional>
 extern "C" {
+#include <string.h>
 #include "jssy.h"
 #include <xpwn/libxpwn.h>
 #include <xpwn/pwnutil.h>
