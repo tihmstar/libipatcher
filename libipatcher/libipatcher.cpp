@@ -26,8 +26,8 @@ extern "C" {
 
 #define FIRMWARE_JSON_URL_START "https://firmware-keys.ipsw.me/firmware/"
 #define reterror(err) throw exception(__LINE__,err)
-#define assure(cond) if ((cond) == 0) throw exception(__LINE__)
-#define retassure(err,cond) if ((cond) == 0) throw exception(__LINE__,err)
+#define assure(cond) if ((cond) == 0) throw exception(__LINE__, "assure failed")
+#define retassure(cond, err) if ((cond) == 0) throw exception(__LINE__,err)
 
 #define bswap32 __builtin_bswap32
 
@@ -274,9 +274,10 @@ pair<char*,size_t>libipatcher::decryptFile3(char *encfile, size_t encfileSize, c
     
     size_t bytes;
     hexToInts(keys.iv, &iv, &bytes);
-    assure(bytes == 16);
+    retassure(bytes == 16, "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+keys.iv);
+
     hexToInts(keys.key, &key, &bytes);
-    assure(bytes == 32);
+    retassure(bytes == 32, "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+keys.key);
     
     assure(afibss = openAbstractFile3(enc = createAbstractFileFromMemoryFile((void**)&encfile, &encfileSize), key, iv, 0));
     assure(decibssSize = afibss->getLength(afibss));
