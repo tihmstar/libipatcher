@@ -12,6 +12,14 @@ CPPFLAGS+=" -std=c++11"
 CFLAGS+=" -std=c11"
 AC_PROG_CC
 
+# Check for operating system
+AC_MSG_CHECKING([whether we need platform-specific build settings])
+case $host_os in
+  darwin* )
+        CXXFLAGS+=" -stdlib=libc++"
+        ;;
+esac
+
 AC_CONFIG_MACRO_DIRS([m4])
 
 # Checks for libraries.
