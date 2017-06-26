@@ -25,8 +25,10 @@ extern "C" {
 
 
 #define FIRMWARE_JSON_URL_START "https://firmware-keys.ipsw.me/firmware/"
+#define DEVICE_JSON_URL_START   "https://firmware-keys.ipsw.me/device/"
+
 #define reterror(err) throw exception(__LINE__,err)
-#define assure(cond) if ((cond) == 0) throw exception(__LINE__, "assure failed")
+#define assure(cond) if ((cond) == 0) throw libipatcher::exception(__LINE__, "assure failed")
 #define retassure(cond, err) if ((cond) == 0) throw exception(__LINE__,err)
 
 #define bswap32 __builtin_bswap32
@@ -80,6 +82,7 @@ namespace libipatcher {
             ptr_smart() {p = NULL;}
             T operator=(T pp) {return p = pp;}
             T *operator&() {return &p;}
+            T operator->() {return p;}
             operator const T() const {return p;}
             ~ptr_smart() {if (p) (_ptr_free) ? _ptr_free(p) : free((void*)p);}
         };
@@ -95,8 +98,11 @@ namespace libipatcher {
         };
         
     }
-    std::string getFirmwareJson(const std::string &device, const std::string &buildnum);
-    std::pair<char*,size_t>patchfile(char *ibss, size_t ibssSize, const fw_key &keys, const std::string &findstr, std::function<int(char *, size_t)> patchfunc);
+    std::string getRemoteFile(std::string url);
+    std::string getRemoteDestination(std::string url);
+    std::string getFirmwareJson(std::string device, std::string buildnum);
+    std::string getDeviceJson(std::string device);
+    std::pair<char*,size_t>patchfile(const char *ibss, size_t ibssSize, const fw_key &keys, std::string findstr, std::function<int(char *, size_t)> patchfunc);
 }
 using namespace std;
 using namespace libipatcher;
@@ -106,13 +112,10 @@ string libipatcher::version(){
     return {"Libipatcher Version: " LIBIPATCHER_VERSION_COMMIT_SHA " - " LIBIPATCHER_VERSION_COMMIT_COUNT};
 }
 
-string libipatcher::getFirmwareJson(const std::string &device, const std::string &buildnum){
+string libipatcher::getRemoteFile(std::string url){
     string buf;
     CURL *mc = curl_easy_init();
     assure(mc);
-    
-    string url(FIRMWARE_JSON_URL_START);
-    url += device + "/" + buildnum;
     
     curl_easy_setopt(mc, CURLOPT_URL, url.c_str());
     curl_easy_setopt(mc, CURLOPT_USERAGENT, "libipatcher/" LIBIPATCHER_VERSION_COMMIT_COUNT " APIKEY=" LIBIPATCHER_VERSION_COMMIT_SHA);
@@ -121,15 +124,48 @@ string libipatcher::getFirmwareJson(const std::string &device, const std::string
     
     curl_easy_setopt(mc, CURLOPT_WRITEFUNCTION, &helpers::downloadFunction);
     curl_easy_setopt(mc, CURLOPT_WRITEDATA, &buf);
-
+    
     assure(curl_easy_perform(mc) == CURLE_OK);
+    
+    curl_easy_cleanup(mc);
+    return buf;
+}
+
+std::string libipatcher::getRemoteDestination(std::string url){
+    char* location = NULL; //don't free me manually
+    string buf;
+    CURL *mc = curl_easy_init();
+    assure(mc);
+    
+    curl_easy_setopt(mc, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(mc, CURLOPT_USERAGENT, "libipatcher/" LIBIPATCHER_VERSION_COMMIT_COUNT " APIKEY=" LIBIPATCHER_VERSION_COMMIT_SHA);
+    curl_easy_setopt(mc, CURLOPT_CONNECTTIMEOUT, 30);
+    curl_easy_setopt(mc, CURLOPT_NOBODY, 1);
+    
+    assure(curl_easy_perform(mc) == CURLE_OK);
+    
+    assure(curl_easy_getinfo(mc, CURLINFO_REDIRECT_URL, &location) == CURLE_OK);
+    buf = location;
 
     curl_easy_cleanup(mc);
     return buf;
 }
 
 
-fw_key libipatcher::getFirmwareKey(const std::string &device, const std::string &buildnum, std::string file){
+string libipatcher::getFirmwareJson(std::string device, std::string buildnum){
+    string url(FIRMWARE_JSON_URL_START);
+    url += device + "/" + buildnum;
+    return getRemoteFile(url);
+}
+
+string libipatcher::getDeviceJson(std::string device){
+    string url(DEVICE_JSON_URL_START);
+    url += device;
+    return getRemoteFile(url);
+}
+
+
+fw_key libipatcher::getFirmwareKey(std::string device, std::string buildnum, std::string file){
     if (file == "RestoreLogo")
         file = "AppleLogo";
     else if (file == "RestoreRamDisk")
@@ -154,15 +190,17 @@ fw_key libipatcher::getFirmwareKey(const std::string &device, const std::string 
     
     jssytok_t *iv = NULL;
     jssytok_t *key = NULL;
-    jssy_doForValuesInArray(keys, {
-        jssytok_t *image = jssy_dictGetValueForKey(t, "image");
+    
+    jssytok_t *tmp = keys->subval;
+    for (size_t i=0; i<keys->size; tmp=tmp->next, i++) {
+        jssytok_t *image = jssy_dictGetValueForKey(tmp, "image");
         assure(image);
         if (strncmp(file.c_str(), image->value, image->size) == 0){
-            iv = jssy_dictGetValueForKey(t, "iv");
-            key = jssy_dictGetValueForKey(t, "key");
+            iv = jssy_dictGetValueForKey(tmp, "iv");
+            key = jssy_dictGetValueForKey(tmp, "key");
             break;
         }
-    });
+    }
     assure(iv && key);
     
     assure(iv->size <= sizeof(rt.iv));
@@ -175,7 +213,7 @@ fw_key libipatcher::getFirmwareKey(const std::string &device, const std::string 
     return rt;
 }
 
-pair<char*,size_t>libipatcher::patchfile(char *ibss, size_t ibssSize, const fw_key &keys, const string&findstr, function<int(char *, size_t)> patchfunc){
+pair<char*,size_t>libipatcher::patchfile(const char *ibss, size_t ibssSize, const fw_key &keys, string findstr, function<int(char *, size_t)> patchfunc){
     TestByteOrder();
     char *decibss = NULL;
     size_t decibssSize = 0;
@@ -253,15 +291,15 @@ int iBoot32Patch(char *deciboot, size_t decibootSize){
     return 0;
 }
 
-pair<char*,size_t>libipatcher::patchiBSS(char *ibss, size_t ibssSize, const fw_key &keys){
+pair<char*,size_t>libipatcher::patchiBSS(const char *ibss, size_t ibssSize, const fw_key &keys){
     return patchfile(ibss, ibssSize, keys, "iBSS", iBoot32Patch);
 }
 
-pair<char*,size_t>libipatcher::patchiBEC(char *ibec, size_t ibecSize, const libipatcher::fw_key &keys){
+pair<char*,size_t>libipatcher::patchiBEC(const char *ibec, size_t ibecSize, const libipatcher::fw_key &keys){
     return patchfile(ibec, ibecSize, keys, "iBEC", iBoot32Patch);
 }
 
-pair<char*,size_t>libipatcher::decryptFile3(char *encfile, size_t encfileSize, const libipatcher::fw_key &keys){
+pair<char*,size_t>libipatcher::decryptFile3(const char *encfile, size_t encfileSize, const libipatcher::fw_key &keys){
     TestByteOrder();
     char *decibss = NULL;
     size_t decibssSize = 0;
@@ -298,6 +336,76 @@ pair<char*,size_t>libipatcher::decryptFile3(char *encfile, size_t encfileSize, c
     return pair<char*,size_t>{patched,patchedSize};
 }
 
+pwnBundle libipatcher::getAnyPwnBundleForDevice(std::string device){
+    pwnBundle rt;
+    ptr_smart<jssytok_t*> tokens = NULL;
+    long tokensCnt = 0;
+    int findKeys= 0;
+    
+    string json = getDeviceJson(device);
+    
+    assure((tokensCnt = jssy_parse(json.c_str(), json.size(), NULL, 0)) > 0);
+    assure(tokens = (jssytok_t*)malloc(sizeof(jssytok_t)*tokensCnt));
+    assure(jssy_parse(json.c_str(), json.size(), tokens, tokensCnt * sizeof(jssytok_t)) == tokensCnt);
+    
+    assure(tokens->type == JSSY_ARRAY);
+    
+    jssytok_t *tmp = tokens->subval;
+    for (size_t i=0; i<tokens->size; tmp=tmp->next, i++) {
+        jssytok_t *deviceName = jssy_dictGetValueForKey(tmp, "identifier");
+        assure(deviceName && deviceName->type == JSSY_STRING);
+        if (strncmp(deviceName->value, device.c_str(), deviceName->size))
+            continue;
+        
+        jssytok_t *buildID = jssy_dictGetValueForKey(tmp, "buildid");
+        
+        string buildNum = string(buildID->value,buildID->size);
+        
+        string firmwareUrl = "https://api.ipsw.me/v2.1/";
+        firmwareUrl += device;
+        firmwareUrl += "/";
+        firmwareUrl += buildNum;
+        firmwareUrl += "/url/dl";
+        
+        rt.firmwareUrl = getRemoteDestination(firmwareUrl);
+        try {
+            rt.iBSSKey = getFirmwareKey(device, buildNum, "iBSS");
+            rt.iBECKey = getFirmwareKey(device, buildNum, "iBEC");
+        } catch (libipatcher::exception e) {
+            rt.firmwareUrl.erase();
+            rt.iBSSKey = {};
+            rt.iBECKey = {};
+            continue;
+        }
+        findKeys = 0;
+        try {
+            ptr_smart<unsigned int *>key;
+            ptr_smart<unsigned int *>iv;
+            size_t bytes;
+            hexToInts(rt.iBECKey.iv, &iv, &bytes);
+            retassure(bytes == 16, "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+rt.iBECKey.iv);
+            hexToInts(rt.iBECKey.key, &key, &bytes);
+            retassure(bytes == 32, "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+rt.iBECKey.key);
+            
+            hexToInts(rt.iBSSKey.iv, &iv, &bytes);
+            retassure(bytes == 16, "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+rt.iBSSKey.iv);
+            hexToInts(rt.iBSSKey.key, &key, &bytes);
+            retassure(bytes == 32, "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+rt.iBSSKey.key);
+            
+        } catch (libipatcher::exception e) {
+            rt.firmwareUrl.erase();
+            rt.iBSSKey = {};
+            rt.iBECKey = {};
+            continue;
+        }
+        return rt;
+    }
+    
+    string reason = (findKeys) ? "devices has no keys in database" : "no valid keys found";
+    
+    retassure(0, "Could not create pwnBundle for device="+device + "reason="+reason);
+    return {};
+}
 
 
 

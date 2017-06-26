@@ -51,6 +51,7 @@
 		876E2F241EDC4CF400D5D374 /* libcommonCrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcommonCrypto.tbd; path = usr/lib/system/libcommonCrypto.tbd; sourceTree = SDKROOT; };
 		876E2F261EDC4D9000D5D374 /* libcrypto.1.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.1.0.0.dylib; path = ../../../../usr/local/Cellar/openssl/1.0.2l/lib/libcrypto.1.0.0.dylib; sourceTree = "<group>"; };
 		876E2F281EDC4DCB00D5D374 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		87D52DD31F0116150039F37D /* libipatcher.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = libipatcher.hpp; path = include/libipatcher/libipatcher.hpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +93,7 @@
 			children = (
 				876E2F091EDC4A5D00D5D374 /* all_libipatcher.h */,
 				876E2F0F1EDC4AEA00D5D374 /* external */,
+				87D52DD31F0116150039F37D /* libipatcher.hpp */,
 				876E2F0A1EDC4A5D00D5D374 /* libipatcher.cpp */,
 				872C34721EDC491B00CFEB7A /* main.cpp */,
 			);
