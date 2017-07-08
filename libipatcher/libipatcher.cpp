@@ -242,9 +242,9 @@ fw_key libipatcher::getFirmwareKey(std::string device, std::string buildnum, std
     ptr_smart<unsigned int *>tiv;
     size_t bytes;
     hexToInts(rt.iv, &tiv, &bytes);
-    retassure(bytes == 16, "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+rt.iv);
+    retassure(bytes == 16 || bytes == 0, "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+rt.iv);
     hexToInts(rt.key, &tkey, &bytes);
-    retassure(bytes == 32, "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+rt.key);
+    retassure(bytes == 32 || bytes == 0, "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+rt.key);
 
     return rt;
 }
@@ -348,10 +348,10 @@ pair<char*,size_t>libipatcher::decryptFile3(const char *encfile, size_t encfileS
     
     size_t bytes;
     hexToInts(keys.iv, &iv, &bytes);
-    retassure(bytes == 16, "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+keys.iv);
+    retassure(bytes == 16 || (bytes == 0 && *keys.iv == '0'), "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+keys.iv);
 
     hexToInts(keys.key, &key, &bytes);
-    retassure(bytes == 32, "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+keys.key);
+    retassure(bytes == 32 || (bytes == 0 && *keys.key == '0'), "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+keys.key);
     
     assure(afibss = openAbstractFile3(enc = createAbstractFileFromMemoryFile((void**)&encfile, &encfileSize), key, iv, 0));
     assure(decibssSize = afibss->getLength(afibss));
