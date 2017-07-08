@@ -175,7 +175,7 @@ fw_key libipatcher::getFirmwareKey(std::string device, std::string buildnum, std
     else if (file == "RestoreKernelCache")
         file = "Kernelcache";
     
-    fw_key rt;
+    fw_key rt = {0};
     ptr_smart<jssytok_t*> tokens = NULL;
     long tokensCnt = 0;
     
@@ -210,6 +210,14 @@ fw_key libipatcher::getFirmwareKey(std::string device, std::string buildnum, std
     rt.iv[sizeof(rt.iv)-1] = 0;
     rt.key[sizeof(rt.key)-1] = 0;
     
+    ptr_smart<unsigned int *>tkey;
+    ptr_smart<unsigned int *>tiv;
+    size_t bytes;
+    hexToInts(rt.iv, &tiv, &bytes);
+    retassure(bytes == 16, "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+rt.iv);
+    hexToInts(rt.key, &tkey, &bytes);
+    retassure(bytes == 32, "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+rt.key);
+
     return rt;
 }
 
@@ -378,26 +386,6 @@ pwnBundle libipatcher::getAnyPwnBundleForDevice(std::string device){
             continue;
         }
         findKeys = 0;
-        try {
-            ptr_smart<unsigned int *>key;
-            ptr_smart<unsigned int *>iv;
-            size_t bytes;
-            hexToInts(rt.iBECKey.iv, &iv, &bytes);
-            retassure(bytes == 16, "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+rt.iBECKey.iv);
-            hexToInts(rt.iBECKey.key, &key, &bytes);
-            retassure(bytes == 32, "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+rt.iBECKey.key);
-            
-            hexToInts(rt.iBSSKey.iv, &iv, &bytes);
-            retassure(bytes == 16, "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+rt.iBSSKey.iv);
-            hexToInts(rt.iBSSKey.key, &key, &bytes);
-            retassure(bytes == 32, "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+rt.iBSSKey.key);
-            
-        } catch (libipatcher::exception e) {
-            rt.firmwareUrl.erase();
-            rt.iBSSKey = {};
-            rt.iBECKey = {};
-            continue;
-        }
         return rt;
     }
     
