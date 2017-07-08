@@ -153,15 +153,43 @@ std::string libipatcher::getRemoteDestination(std::string url){
 
 
 string libipatcher::getFirmwareJson(std::string device, std::string buildnum){
-    string url(FIRMWARE_JSON_URL_START);
-    url += device + "/" + buildnum;
-    return getRemoteFile(url);
+    try {
+        string url(FIRMWARE_JSON_URL_START);
+        url += device + "/" + buildnum;
+        return getRemoteFile(url);
+    } catch (libipatcher::exception &e) {
+        //retrying with local server
+    }
+    try {
+        string url("localhost/firmware/");
+        url += device + "/" + buildnum;
+        return getRemoteFile(url);
+    } catch (libipatcher::exception &e) {
+        retassure(0, "failed to get FirmwareJson from Server");
+    }
+    
+    //we will never reach this
+    return {};
 }
 
 string libipatcher::getDeviceJson(std::string device){
-    string url(DEVICE_JSON_URL_START);
-    url += device;
-    return getRemoteFile(url);
+    try {
+        string url(DEVICE_JSON_URL_START);
+        url += device;
+        return getRemoteFile(url);
+    } catch (libipatcher::exception &e) {
+        //retrying with local server
+    }
+    try {
+        string url("localhost/device/");
+        url += device;
+        return getRemoteFile(url);
+    } catch (libipatcher::exception &e) {
+        retassure(0, "failed to get DeviceJson from Server");
+    }
+    
+    //we will never reach this
+    return {};
 }
 
 
@@ -181,7 +209,7 @@ fw_key libipatcher::getFirmwareKey(std::string device, std::string buildnum, std
     
     string json = getFirmwareJson(device, buildnum);
     
-    assure((tokensCnt = jssy_parse(json.c_str(), json.size(), NULL, 0)) > 0);
+    retassure((tokensCnt = jssy_parse(json.c_str(), json.size(), NULL, 0)) > 0, "failed to parse json");
     assure(tokens = (jssytok_t*)malloc(sizeof(jssytok_t)*tokensCnt));
     assure(jssy_parse(json.c_str(), json.size(), tokens, tokensCnt * sizeof(jssytok_t)) == tokensCnt);
     
