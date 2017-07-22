@@ -16,14 +16,25 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     cout << "start" << endl;
     
+    if (argc < 2){
+        cout << "need buildnum"<<endl;
+        return 1;
+    }
+    
+    string bnum = argv[1];
+    
     fw_key bun;
     try {
-        bun = libipatcher::getFirmwareKey("iPhone4,1", "9A406", "RestoreRamdisk");
+        bun = libipatcher::getFirmwareKey("iPhone4,1", bnum, "iBEC");
     } catch (libipatcher::exception &e) {
         cout << e.what()<<endl;
     }
     
-    FILE *f = fopen("enc.dmg","rb");
+    cout << "IV=" << bun.iv << endl;
+    cout << "Key=" << bun.key << endl;
+    
+    string fname = string("iBEC_")+bnum;
+    FILE *f = fopen(fname.c_str(),"rb");
     size_t fs = 0;
     char  *buf = NULL;
     fseek(f, 0, SEEK_END);
@@ -33,9 +44,9 @@ int main(int argc, const char * argv[]) {
     fread(buf, 1, fs, f);
     fclose(f);
     
-    auto dec = libipatcher::decryptFile3(buf, fs, bun);
+    auto dec = libipatcher::patchiBEC(buf, fs, bun);
     {
-        FILE *f = fopen("dec.dmg","wb");
+        FILE *f = fopen((fname+".pwn").c_str(),"wb");
         fwrite(dec.first, 1, dec.second, f);
         fclose(f);
     }

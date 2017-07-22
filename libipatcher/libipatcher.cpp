@@ -126,6 +126,9 @@ string libipatcher::getRemoteFile(std::string url){
     curl_easy_setopt(mc, CURLOPT_WRITEDATA, &buf);
     
     assure(curl_easy_perform(mc) == CURLE_OK);
+    long http_code = 0;
+    curl_easy_getinfo (mc, CURLINFO_RESPONSE_CODE, &http_code);
+    assure(http_code == 200);
     
     curl_easy_cleanup(mc);
     return buf;
@@ -154,19 +157,21 @@ std::string libipatcher::getRemoteDestination(std::string url){
 
 string libipatcher::getFirmwareJson(std::string device, std::string buildnum){
     try {
-        string url(FIRMWARE_JSON_URL_START);
+        string url("localhost/firmware/");
         url += device + "/" + buildnum;
         return getRemoteFile(url);
     } catch (libipatcher::exception &e) {
-        //retrying with local server
+        //retrying with api server
+
     }
     try {
-        string url("localhost/firmware/");
+        string url(FIRMWARE_JSON_URL_START);
         url += device + "/" + buildnum;
         return getRemoteFile(url);
     } catch (libipatcher::exception &e) {
         retassure(0, "failed to get FirmwareJson from Server");
     }
+    
     
     //we will never reach this
     return {};
@@ -174,14 +179,14 @@ string libipatcher::getFirmwareJson(std::string device, std::string buildnum){
 
 string libipatcher::getDeviceJson(std::string device){
     try {
-        string url(DEVICE_JSON_URL_START);
+        string url("localhost/device/");
         url += device;
         return getRemoteFile(url);
     } catch (libipatcher::exception &e) {
         //retrying with local server
     }
     try {
-        string url("localhost/device/");
+        string url(DEVICE_JSON_URL_START);
         url += device;
         return getRemoteFile(url);
     } catch (libipatcher::exception &e) {
