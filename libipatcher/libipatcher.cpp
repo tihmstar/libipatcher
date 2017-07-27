@@ -320,20 +320,21 @@ int iBoot32Patch(char *deciboot, size_t decibootSize, const char *bootargs){
         }
         
         if (bootargs) {
-            ret = patch_debug_enabled(&iboot_in);
-            
-            if(!ret) {
-                printf("%s: Error doing patch_debug_enabled()!\n", __FUNCTION__);
-                free(iboot_in.buf);
-                return -1;
-            }
-            
             ret = patch_boot_args(&iboot_in, bootargs);
             
             if(!ret) {
                 printf("%s: Error doing patch_boot_args()!\n", __FUNCTION__);
                 free(iboot_in.buf);
                 return -1;
+            }
+            if (strstr(bootargs, "debug")) {
+                ret = patch_debug_enabled(&iboot_in);
+                
+                if(!ret) {
+                    printf("%s: Error doing patch_debug_enabled()!\n", __FUNCTION__);
+                    free(iboot_in.buf);
+                    return -1;
+                }
             }
         }
         
