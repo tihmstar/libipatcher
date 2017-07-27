@@ -102,7 +102,7 @@ namespace libipatcher {
     std::string getRemoteDestination(std::string url);
     std::string getFirmwareJson(std::string device, std::string buildnum);
     std::string getDeviceJson(std::string device);
-    std::pair<char*,size_t>patchfile(const char *ibss, size_t ibssSize, const fw_key &keys, std::string findstr, std::function<int(char *, size_t)> patchfunc);
+    std::pair<char*,size_t>patchfile(const char *ibss, size_t ibssSize, const fw_key &keys, std::string findstr, std::string bootargs, std::function<int(char *, size_t, const char *)> patchfunc);
 }
 using namespace std;
 using namespace libipatcher;
@@ -254,7 +254,7 @@ fw_key libipatcher::getFirmwareKey(std::string device, std::string buildnum, std
     return rt;
 }
 
-pair<char*,size_t>libipatcher::patchfile(const char *ibss, size_t ibssSize, const fw_key &keys, string findstr, function<int(char *, size_t)> patchfunc){
+pair<char*,size_t>libipatcher::patchfile(const char *ibss, size_t ibssSize, const fw_key &keys, string findstr, string bootargs, function<int(char *, size_t, const char*)> patchfunc){
     TestByteOrder();
     char *decibss = NULL;
     size_t decibssSize = 0;
@@ -279,7 +279,7 @@ pair<char*,size_t>libipatcher::patchfile(const char *ibss, size_t ibssSize, cons
     assure(*decibss != '3' && memmem(decibss, decibssSize, findstr.c_str() , findstr.size()));
     
     //patch here
-    assure(!patchfunc(decibss, decibssSize));
+    assure(!patchfunc(decibss, decibssSize, (bootargs.size()) ? bootargs.c_str() : NULL));
     
     //close file
     assure(patched = (char*)malloc(1));
@@ -293,7 +293,7 @@ pair<char*,size_t>libipatcher::patchfile(const char *ibss, size_t ibssSize, cons
     return pair<char*,size_t>{patched,patchedSize};
 }
 
-int iBoot32Patch(char *deciboot, size_t decibootSize){
+int iBoot32Patch(char *deciboot, size_t decibootSize, const char *bootargs){
     struct iboot_img iboot_in;
     iboot_in.buf = deciboot;
     iboot_in.len = decibootSize;
@@ -318,6 +318,25 @@ int iBoot32Patch(char *deciboot, size_t decibootSize){
             free(iboot_in.buf);
             return -1;
         }
+        
+        if (bootargs) {
+            ret = patch_debug_enabled(&iboot_in);
+            
+            if(!ret) {
+                printf("%s: Error doing patch_debug_enabled()!\n", __FUNCTION__);
+                free(iboot_in.buf);
+                return -1;
+            }
+            
+            ret = patch_boot_args(&iboot_in, bootargs);
+            
+            if(!ret) {
+                printf("%s: Error doing patch_boot_args()!\n", __FUNCTION__);
+                free(iboot_in.buf);
+                return -1;
+            }
+        }
+        
     }
     
     /* All loaders have the RSA check. */
@@ -333,11 +352,11 @@ int iBoot32Patch(char *deciboot, size_t decibootSize){
 }
 
 pair<char*,size_t>libipatcher::patchiBSS(const char *ibss, size_t ibssSize, const fw_key &keys){
-    return patchfile(ibss, ibssSize, keys, "iBSS", iBoot32Patch);
+    return patchfile(ibss, ibssSize, keys, "iBSS", "", iBoot32Patch);
 }
 
-pair<char*,size_t>libipatcher::patchiBEC(const char *ibec, size_t ibecSize, const libipatcher::fw_key &keys){
-    return patchfile(ibec, ibecSize, keys, "iBEC", iBoot32Patch);
+pair<char*,size_t>libipatcher::patchiBEC(const char *ibec, size_t ibecSize, const libipatcher::fw_key &keys, std::string bootargs){
+    return patchfile(ibec, ibecSize, keys, "iBEC", bootargs, iBoot32Patch);
 }
 
 pair<char*,size_t>libipatcher::decryptFile3(const char *encfile, size_t encfileSize, const libipatcher::fw_key &keys){
