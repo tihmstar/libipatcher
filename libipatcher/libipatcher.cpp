@@ -21,6 +21,7 @@ extern "C" {
 #include <include/iBoot32Patcher.h>
 #include <include/functions.h>
 #include <include/patchers.h>
+AbstractFile* createAbstractFileFromComp(AbstractFile* file);
 }
 
 
@@ -374,11 +375,48 @@ pair<char*,size_t>libipatcher::decryptFile3(const char *encfile, size_t encfileS
     size_t bytes;
     hexToInts(keys.iv, &iv, &bytes);
     retassure(bytes == 16 || (bytes == 0 && *keys.iv == '0'), "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+keys.iv);
-
+    
     hexToInts(keys.key, &key, &bytes);
     retassure(bytes == 32 || (bytes == 0 && *keys.key == '0'), "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+keys.key);
     
     assure(afibss = openAbstractFile3(enc = createAbstractFileFromMemoryFile((void**)&encfile, &encfileSize), key, iv, 0));
+    assure(decibssSize = afibss->getLength(afibss));
+    assure(decibss = (char*)malloc(decibssSize));
+    assure(afibss->read(afibss,decibss, decibssSize) == decibssSize);
+    
+    assure(*decibss != '3');
+    
+    //close file
+    assure(patched = (char*)malloc(1));
+    
+    AbstractFile_smart newFile = duplicateAbstractFile2(enc, createAbstractFileFromMemoryFile((void**)&patched, &patchedSize), NULL, NULL, NULL);
+    assure(newFile.p);
+    assure(newFile.p->write(newFile.p, decibss, decibssSize) == decibssSize);
+    newFile.p->close(newFile.p);
+    newFile = NULL;
+    
+    return pair<char*,size_t>{patched,patchedSize};
+}
+
+pair<char*,size_t>libipatcher::extractKernel(const char *encfile, size_t encfileSize, const libipatcher::fw_key &keys){
+    TestByteOrder();
+    char *decibss = NULL;
+    size_t decibssSize = 0;
+    ptr_smart<unsigned int *>key;
+    ptr_smart<unsigned int *>iv;
+    AbstractFile *afibss;
+    char *patched = NULL;
+    size_t patchedSize = 0;
+    AbstractFile *enc = NULL;
+    
+    size_t bytes;
+    hexToInts(keys.iv, &iv, &bytes);
+    retassure(bytes == 16 || (bytes == 0 && *keys.iv == '0'), "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+keys.iv);
+    
+    hexToInts(keys.key, &key, &bytes);
+    retassure(bytes == 32 || (bytes == 0 && *keys.key == '0'), "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+keys.key);
+    
+    assure(afibss = openAbstractFile2(enc = createAbstractFileFromMemoryFile((void**)&encfile, &encfileSize), key, iv));
     assure(decibssSize = afibss->getLength(afibss));
     assure(decibss = (char*)malloc(decibssSize));
     assure(afibss->read(afibss,decibss, decibssSize) == decibssSize);
