@@ -423,16 +423,7 @@ pair<char*,size_t>libipatcher::extractKernel(const char *encfile, size_t encfile
     
     assure(*decibss != '3');
     
-    //close file
-    assure(patched = (char*)malloc(1));
-    
-    AbstractFile_smart newFile = duplicateAbstractFile2(enc, createAbstractFileFromMemoryFile((void**)&patched, &patchedSize), NULL, NULL, NULL);
-    assure(newFile.p);
-    assure(newFile.p->write(newFile.p, decibss, decibssSize) == decibssSize);
-    newFile.p->close(newFile.p);
-    newFile = NULL;
-    
-    return pair<char*,size_t>{patched,patchedSize};
+    return pair<char*,size_t>{decibss,decibssSize};
 }
 
 pwnBundle libipatcher::getAnyPwnBundleForDevice(std::string device){
