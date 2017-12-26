@@ -249,9 +249,10 @@ fw_key libipatcher::getFirmwareKey(std::string device, std::string buildnum, std
     size_t bytes;
     hexToInts(rt.iv, &tiv, &bytes);
     retassure(bytes == 16 || bytes == 0, "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+rt.iv);
+    if (!bytes) *rt.iv = '0'; //indicate no key required
     hexToInts(rt.key, &tkey, &bytes);
     retassure(bytes == 32 || bytes == 0, "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+rt.key);
-
+    if (!bytes) *rt.key = '0'; //indicate no key required
     return rt;
 }
 
@@ -268,11 +269,16 @@ pair<char*,size_t>libipatcher::patchfile(const char *ibss, size_t ibssSize, cons
     
     size_t bytes;
     hexToInts(keys.iv, &iv, &bytes);
-    assure(bytes == 16);
-    hexToInts(keys.key, &key, &bytes);
-    assure(bytes == 32);
+    retassure(bytes == 16 || (bytes == 0 && *keys.iv == '0'), "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+keys.iv);
     
-    assure(afibss = openAbstractFile2(enc = createAbstractFileFromMemoryFile((void**)&ibss, &ibssSize), key, iv));
+    hexToInts(keys.key, &key, &bytes);
+    retassure(bytes == 32 || (bytes == 0 && *keys.key == '0'), "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+keys.key);
+    
+    if (*keys.key == '0' && *keys.iv == '0') { //file is not encrypted
+        assure(afibss = openAbstractFile2(enc = createAbstractFileFromMemoryFile((void**)&ibss, &ibssSize), 0, 0));
+    }else{
+        assure(afibss = openAbstractFile2(enc = createAbstractFileFromMemoryFile((void**)&ibss, &ibssSize), key, iv));
+    }
     assure(decibssSize = afibss->getLength(afibss));
     assure(decibss = (char*)malloc(decibssSize));
     assure(afibss->read(afibss,decibss, decibssSize) == decibssSize);
@@ -354,11 +360,11 @@ int iBoot32Patch(char *deciboot, size_t decibootSize, const char *bootargs){
 }
 
 pair<char*,size_t>libipatcher::patchiBSS(const char *ibss, size_t ibssSize, const fw_key &keys){
-    return patchfile(ibss, ibssSize, keys, "iBSS", "", iBoot32Patch);
+    return patchfile(ibss, ibssSize, keys, "iBoot", "", iBoot32Patch);
 }
 
 pair<char*,size_t>libipatcher::patchiBEC(const char *ibec, size_t ibecSize, const libipatcher::fw_key &keys, std::string bootargs){
-    return patchfile(ibec, ibecSize, keys, "iBEC", bootargs, iBoot32Patch);
+    return patchfile(ibec, ibecSize, keys, "iBoot", bootargs, iBoot32Patch);
 }
 
 pair<char*,size_t>libipatcher::decryptFile3(const char *encfile, size_t encfileSize, const libipatcher::fw_key &keys){
