@@ -25,7 +25,7 @@ int main(int argc, const char * argv[]) {
     
     fw_key bun;
     try {
-        bun = libipatcher::getFirmwareKey("iPhone4,1", bnum, "iBEC");
+        bun = libipatcher::getFirmwareKey("iPhone5,1", bnum, "iBEC");
     } catch (libipatcher::exception &e) {
         cout << e.what()<<endl;
     }

@@ -318,8 +318,18 @@ int iBoot32Patch(char *deciboot, size_t decibootSize, const char *bootargs){
     /* Check to see if the loader has a kernel load routine before trying to apply custom boot args + debug-enabled override. */
     if(has_kernel_load(&iboot_in)) {
         
-        ret = patch_ticket_check(&iboot_in);
+        if (iboot_in.VERS == 3406) {
+            printf("%s: iOS 10 iBoot detected, patching remote command!\n", __FUNCTION__);
+            ret = patch_remote_boot(&iboot_in);
+            if(!ret) {
+                printf("%s: Error doing patch_remote_boot()!\n", __FUNCTION__);
+                free(iboot_in.buf);
+                return -1;
+            }
+        }
         
+        ret = patch_ticket_check(&iboot_in);
+
         if(!ret) {
             printf("%s: Error doing patch_ticket_check()!\n", __FUNCTION__);
             free(iboot_in.buf);
