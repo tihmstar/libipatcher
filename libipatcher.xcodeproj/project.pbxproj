@@ -312,7 +312,7 @@
 					/usr/local/Cellar/openssl/1.0.2l/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/include $(SRCROOT)/external/iBoot32Patcher /usr/local/include /usr/local/opt/openssl/lib";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/include $(SRCROOT)/external/iBoot32Patcher /usr/local/include /usr/local/opt/openssl/include";
 			};
 			name = Debug;
 		};
