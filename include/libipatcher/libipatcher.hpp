@@ -43,6 +43,7 @@ namespace tihmstar {
         std::pair<char*,size_t>patchiBEC(const char *ibec, size_t ibecSize, const fw_key &keys, std::string bootargs = "");
         
         std::string version();
+        bool has64bitSupport();
     }
 }
 

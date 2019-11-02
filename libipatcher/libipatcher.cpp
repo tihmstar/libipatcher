@@ -136,6 +136,16 @@ string libipatcher::version(){
     return {"Libipatcher Version: " VERSION_COMMIT_SHA " - " VERSION_COMMIT_COUNT};
 }
 
+bool libipatcher::has64bitSupport(){
+#ifdef HAVE_IMG4TOOL
+#ifdef HAVE_LIBOFFSETFINDER64
+    return true;
+#endif //HAVE_LIBOFFSETFINDER64
+#endif //HAVE_IMG4TOOL
+    return false;
+}
+
+
 string libipatcher::getRemoteFile(std::string url){
     string buf;
     CURL *mc = curl_easy_init();
