@@ -202,7 +202,7 @@ string libipatcher::getFirmwareJson(std::string device, std::string buildnum){
         url += device + "/" + buildnum;
         return getRemoteFile(url);
     } catch (...) {
-        reterror(0, "failed to get FirmwareJson from Server");
+        reterror("failed to get FirmwareJson from Server");
     }
     
     
