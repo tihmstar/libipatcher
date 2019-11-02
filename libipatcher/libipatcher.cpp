@@ -38,10 +38,6 @@ AbstractFile* createAbstractFileFromComp(AbstractFile* file);
 #define FIRMWARE_JSON_URL_START "https://firmware-keys.ipsw.me/firmware/"
 #define DEVICE_JSON_URL_START   "https://firmware-keys.ipsw.me/device/"
 
-#define reterror(err) throw exception(__LINE__,err)
-#define assure(cond) if ((cond) == 0) throw libipatcher::exception(__LINE__, "assure failed")
-#define retassure(cond, err) if ((cond) == 0) throw exception(__LINE__,err)
-
 #define bswap32 __builtin_bswap32
 
 #define IMAGE3_MAGIC 'Img3'
@@ -275,10 +271,10 @@ fw_key libipatcher::getFirmwareKey(std::string device, std::string buildnum, std
     ptr_smart<unsigned int *>tiv;
     size_t bytes;
     hexToInts(rt.iv, &tiv, &bytes);
-    retassure(bytes == 16 || bytes == 0, "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+rt.iv);
+    retassure(bytes == 16 || bytes == 0, "IV has bad length. Expected=16 actual=%lld. Got IV=%s",bytes,rt.iv);
     if (!bytes) *rt.iv = '0'; //indicate no key required
     hexToInts(rt.key, &tkey, &bytes);
-    retassure(bytes == 32 || bytes == 0, "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+rt.key);
+    retassure(bytes == 32 || bytes == 0, "KEY has bad length. Expected=32 actual=%lld. Got KEY=%s",bytes,rt.key);
     if (!bytes) *rt.key = '0'; //indicate no key required
     return rt;
 }
@@ -296,10 +292,10 @@ pair<char*,size_t>libipatcher::patchfile32(const char *ibss, size_t ibssSize, co
     
     size_t bytes;
     hexToInts(keys.iv, &iv, &bytes);
-    retassure(bytes == 16 || (bytes == 0 && *keys.iv == '0'), "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+keys.iv);
+    retassure(bytes == 16 || (bytes == 0 && *keys.iv == '0'), "IV has bad length. Expected=16 actual=%lld. Got IV=%s",bytes,keys.iv);
     
     hexToInts(keys.key, &key, &bytes);
-    retassure(bytes == 32 || (bytes == 0 && *keys.key == '0'), "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+keys.key);
+    retassure(bytes == 32 || (bytes == 0 && *keys.key == '0'), "KEY has bad length. Expected=32 actual=%lld. Got KEY=%s",bytes,keys.key);
     
     if (*keys.key == '0' && *keys.iv == '0') { //file is not encrypted
         assure(afibss = openAbstractFile2(enc = createAbstractFileFromMemoryFile((void**)&ibss, &ibssSize), 0, 0));
@@ -552,13 +548,14 @@ pair<char*,size_t>libipatcher::decryptFile3(const char *encfile, size_t encfileS
     size_t patchedSize = 0;
     AbstractFile *enc = NULL;
     
+    
     size_t bytes;
     hexToInts(keys.iv, &iv, &bytes);
-    retassure(bytes == 16 || (bytes == 0 && *keys.iv == '0'), "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+keys.iv);
+    retassure(bytes == 16 || (bytes == 0 && *keys.iv == '0'), "IV has bad length. Expected=16 actual=%lld. Got IV=%s",bytes,keys.iv);
     
     hexToInts(keys.key, &key, &bytes);
-    retassure(bytes == 32 || (bytes == 0 && *keys.key == '0'), "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+keys.key);
-    
+    retassure(bytes == 32 || (bytes == 0 && *keys.key == '0'), "KEY has bad length. Expected=32 actual=%lld. Got KEY=%s",bytes,keys.key);
+
     assure(afibss = openAbstractFile3(enc = createAbstractFileFromMemoryFile((void**)&encfile, &encfileSize), key, iv, 0));
     assure(decibssSize = afibss->getLength(afibss));
     assure(decibss = (char*)malloc(decibssSize));
@@ -589,13 +586,14 @@ pair<char*,size_t>libipatcher::extractKernel(const char *encfile, size_t encfile
     size_t patchedSize = 0;
     AbstractFile *enc = NULL;
     
+    
     size_t bytes;
     hexToInts(keys.iv, &iv, &bytes);
-    retassure(bytes == 16 || (bytes == 0 && *keys.iv == '0'), "IV has bad length. Expected=16 actual=" + to_string(bytes) + ". Got IV="+keys.iv);
+    retassure(bytes == 16 || (bytes == 0 && *keys.iv == '0'), "IV has bad length. Expected=16 actual=%lld. Got IV=%s",bytes,keys.iv);
     
     hexToInts(keys.key, &key, &bytes);
-    retassure(bytes == 32 || (bytes == 0 && *keys.key == '0'), "KEY has bad length. Expected=32 actual=" + to_string(bytes) + ". Got KEY="+keys.key);
-    
+    retassure(bytes == 32 || (bytes == 0 && *keys.key == '0'), "KEY has bad length. Expected=32 actual=%lld. Got KEY=%s",bytes,keys.key);
+
     assure(afibss = openAbstractFile2(enc = createAbstractFileFromMemoryFile((void**)&encfile, &encfileSize), key, iv));
     assure(decibssSize = afibss->getLength(afibss));
     assure(decibss = (char*)malloc(decibssSize));
@@ -651,9 +649,7 @@ pwnBundle libipatcher::getAnyPwnBundleForDevice(std::string device){
         return rt;
     }
     
-    string reason = (findKeys) ? "devices has no keys in database" : "no valid keys found";
-    
-    retassure(0, "Could not create pwnBundle for device="+device + "reason="+reason);
+    reterror("Could not create pwnBundle for device=%s reason=%s",device.c_str(),(findKeys) ? "devices has no keys in database" : "no valid keys found");
     return {};
 }
 

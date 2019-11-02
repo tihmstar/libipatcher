@@ -4,7 +4,8 @@ libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
 Name: libipatcher
-Description: A small C++ wrapper around iBoot32Patcher
-Version: LIBRARY_GIT_VERSION_NUM
-Libs: -L${libdir} -lipatcher -lcurl -lxpwn -lcommon -lpng -lz
+Description: A small C++ wrapper around iBootPatcher
+Requires: libpng >= 1.2.0
+Version: 49
+Libs: -L${libdir} -lipatcher
 Cflags: -I${includedir}
