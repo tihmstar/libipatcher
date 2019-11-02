@@ -10,7 +10,8 @@
 #include <cstdlib>
 #include <libipatcher/libipatcher.hpp>
 
-using namespace libipatcher;
+using namespace tihmstar;
+using namespace tihmstar::libipatcher;
 using namespace std;
 
 int main(int argc, const char * argv[]) {
@@ -25,7 +26,7 @@ int main(int argc, const char * argv[]) {
     
     fw_key bun;
     try {
-        bun = libipatcher::getFirmwareKey("iPhone5,1", bnum, "iBEC");
+        bun = libipatcher::getFirmwareKey("iPhone6,2", bnum, "iBEC");
     } catch (libipatcher::exception &e) {
         cout << e.what()<<endl;
     }
@@ -33,7 +34,7 @@ int main(int argc, const char * argv[]) {
     cout << "IV=" << bun.iv << endl;
     cout << "Key=" << bun.key << endl;
     
-    string fname = string("iBEC_")+bnum;
+    string fname = string("/tmp/kk/iBEC_")+bnum;
     FILE *f = fopen(fname.c_str(),"rb");
     size_t fs = 0;
     char  *buf = NULL;

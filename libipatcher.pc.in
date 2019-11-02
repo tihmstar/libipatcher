@@ -4,8 +4,8 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: libipatcher
-Description: A small C++ wrapper around iBoot32Patcher
+Description: A small C++ wrapper around iBootPatcher
 Requires: libpng >= 1.2.0
-Version: LIBRARY_GIT_VERSION_NUM
+Version: @VERSION_COMMIT_COUNT@
 Libs: -L${libdir} -lipatcher
 Cflags: -I${includedir}

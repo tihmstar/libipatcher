@@ -4,3 +4,6 @@
 [submodule "external/iBoot32Patcher"]
 	path = external/iBoot32Patcher
 	url = https://github.com/tihmstar/iBoot32Patcher.git
+[submodule "external/libgeneral"]
+	path = external/libgeneral
+	url = https://github.com/tihmstar/libgeneral

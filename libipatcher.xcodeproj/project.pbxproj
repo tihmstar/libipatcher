@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4231333A236D83A9005AFE8D /* libimg4tool.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 42313339236D83A9005AFE8D /* libimg4tool.0.dylib */; };
+		4231333B236D83A9005AFE8D /* libimg4tool.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 42313339236D83A9005AFE8D /* libimg4tool.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		4231333E236D9225005AFE8D /* liboffsetfinder64.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4231333D236D9225005AFE8D /* liboffsetfinder64.0.dylib */; };
+		4231333F236D9225005AFE8D /* liboffsetfinder64.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 4231333D236D9225005AFE8D /* liboffsetfinder64.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		872C34731EDC491B00CFEB7A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 872C34721EDC491B00CFEB7A /* main.cpp */; };
 		876E2F0B1EDC4A5D00D5D374 /* libipatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F0A1EDC4A5D00D5D374 /* libipatcher.cpp */; };
 		876E2F0E1EDC4AE600D5D374 /* jssy.c in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F0C1EDC4AE600D5D374 /* jssy.c */; };
@@ -22,6 +26,18 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		4231333C236D83A9005AFE8D /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				4231333B236D83A9005AFE8D /* libimg4tool.0.dylib in Embed Libraries */,
+				4231333F236D9225005AFE8D /* liboffsetfinder64.0.dylib in Embed Libraries */,
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		872C346D1EDC491B00CFEB7A /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -34,9 +50,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		42313339236D83A9005AFE8D /* libimg4tool.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libimg4tool.0.dylib; path = ../../../../usr/local/lib/libimg4tool.0.dylib; sourceTree = "<group>"; };
+		4231333D236D9225005AFE8D /* liboffsetfinder64.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liboffsetfinder64.0.dylib; path = ../../../../usr/local/lib/liboffsetfinder64.0.dylib; sourceTree = "<group>"; };
 		872C346F1EDC491B00CFEB7A /* libipatcher */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libipatcher; sourceTree = BUILT_PRODUCTS_DIR; };
 		872C34721EDC491B00CFEB7A /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		876E2F091EDC4A5D00D5D374 /* all_libipatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = all_libipatcher.h; sourceTree = "<group>"; };
 		876E2F0A1EDC4A5D00D5D374 /* libipatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = libipatcher.cpp; sourceTree = "<group>"; };
 		876E2F0C1EDC4AE600D5D374 /* jssy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jssy.c; path = external/jssy/jssy/jssy.c; sourceTree = SOURCE_ROOT; };
 		876E2F0D1EDC4AE600D5D374 /* jssy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jssy.h; path = external/jssy/jssy/jssy.h; sourceTree = SOURCE_ROOT; };
@@ -60,9 +77,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				876E2F291EDC4DCB00D5D374 /* libz.tbd in Frameworks */,
+				4231333E236D9225005AFE8D /* liboffsetfinder64.0.dylib in Frameworks */,
 				876E2F271EDC4D9000D5D374 /* libcrypto.1.0.0.dylib in Frameworks */,
 				876E2F181EDC4C1300D5D374 /* libpng16.16.dylib in Frameworks */,
 				876E2F161EDC4BDD00D5D374 /* libxpwn.a in Frameworks */,
+				4231333A236D83A9005AFE8D /* libimg4tool.0.dylib in Frameworks */,
 				876E2F141EDC4BD200D5D374 /* libcommon.a in Frameworks */,
 				876E2F121EDC4BC300D5D374 /* libcurl.tbd in Frameworks */,
 			);
@@ -91,7 +110,6 @@
 		872C34711EDC491B00CFEB7A /* libipatcher */ = {
 			isa = PBXGroup;
 			children = (
-				876E2F091EDC4A5D00D5D374 /* all_libipatcher.h */,
 				876E2F0F1EDC4AEA00D5D374 /* external */,
 				87D52DD31F0116150039F37D /* libipatcher.hpp */,
 				876E2F0A1EDC4A5D00D5D374 /* libipatcher.cpp */,
@@ -112,6 +130,8 @@
 		876E2F101EDC4BC300D5D374 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4231333D236D9225005AFE8D /* liboffsetfinder64.0.dylib */,
+				42313339236D83A9005AFE8D /* libimg4tool.0.dylib */,
 				876E2F281EDC4DCB00D5D374 /* libz.tbd */,
 				876E2F261EDC4D9000D5D374 /* libcrypto.1.0.0.dylib */,
 				876E2F241EDC4CF400D5D374 /* libcommonCrypto.tbd */,
@@ -153,6 +173,7 @@
 				872C346B1EDC491B00CFEB7A /* Sources */,
 				872C346C1EDC491B00CFEB7A /* Frameworks */,
 				872C346D1EDC491B00CFEB7A /* CopyFiles */,
+				4231333C236D83A9005AFE8D /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -183,6 +204,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 872C34661EDC491B00CFEB7A;
@@ -307,12 +329,12 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
-					/usr/local/Cellar/libpng/1.6.29/lib,
+					/usr/local/Cellar/libpng/1.6.37/lib,
 					"$(SDKROOT)/usr/lib/system",
-					/usr/local/Cellar/openssl/1.0.2l/lib,
+					/usr/local/Cellar/openssl/1.0.2t/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/include $(SRCROOT)/external/iBoot32Patcher /usr/local/include /usr/local/opt/openssl/lib";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/include $(SRCROOT)/external/iBoot32Patcher /usr/local/include /usr/local/opt/openssl/lib $(SRCROOT)/external/libgeneral/include";
 			};
 			name = Debug;
 		};
@@ -322,12 +344,12 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
-					/usr/local/Cellar/libpng/1.6.29/lib,
+					/usr/local/Cellar/libpng/1.6.37/lib,
 					"$(SDKROOT)/usr/lib/system",
-					/usr/local/Cellar/openssl/1.0.2l/lib,
+					/usr/local/Cellar/openssl/1.0.2t/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/include $(SRCROOT)/external/iBoot32Patcher /usr/local/include /usr/local/opt/openssl/lib";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/include $(SRCROOT)/external/iBoot32Patcher /usr/local/include /usr/local/opt/openssl/lib $(SRCROOT)/external/libgeneral/include";
 			};
 			name = Release;
 		};
