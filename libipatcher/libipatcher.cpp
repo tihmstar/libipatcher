@@ -507,7 +507,7 @@ int iBoot64Patch(char *deciboot, size_t decibootSize, const char *bootargs) noex
 
 pair<char*,size_t>libipatcher::patchiBSS(const char *ibss, size_t ibssSize, const fw_key &keys){
 #ifdef HAVE_IMG4TOOL
-#ifdef HAVE_LIBOFFSETFINDER6
+#ifdef HAVE_LIBOFFSETFINDER64
     bool is64Bit = false;
     try {
        img4tool::ASN1DERElement im4p(ibss,ibssSize);
@@ -527,7 +527,7 @@ pair<char*,size_t>libipatcher::patchiBSS(const char *ibss, size_t ibssSize, cons
 
 pair<char*,size_t>libipatcher::patchiBEC(const char *ibec, size_t ibecSize, const libipatcher::fw_key &keys, std::string bootargs){
 #ifdef HAVE_IMG4TOOL
-#ifdef HAVE_LIBOFFSETFINDER6
+#ifdef HAVE_LIBOFFSETFINDER64
     bool is64Bit = false;
     try {
         img4tool::ASN1DERElement im4p(ibec,ibecSize);
@@ -545,6 +545,26 @@ pair<char*,size_t>libipatcher::patchiBEC(const char *ibec, size_t ibecSize, cons
 #endif //HAVE_IMG4TOOL
     return patchfile32(ibec, ibecSize, keys, "iBoot", bootargs, iBoot32Patch);
 }
+
+std::pair<char*,size_t>libipatcher::packIM4PToIMG4(const void *im4p, size_t im4pSize, const void *im4m, size_t im4mSize){
+#ifdef HAVE_IMG4TOOL
+    char *out = NULL;
+    img4tool::ASN1DERElement eim4p{im4p,im4pSize};
+    img4tool::ASN1DERElement eim4m{im4m,im4mSize};
+
+    img4tool::ASN1DERElement img4 = img4tool::getEmptyIMG4Container();
+    
+    img4 = img4tool::appendIM4PToIMG4(img4, eim4p);
+    img4 = img4tool::appendIM4MToIMG4(img4, eim4m);
+    
+    out = (char*)malloc(img4.size());
+    memcpy(out, img4.buf(), img4.size());
+    return {out,img4.size()};
+#else
+    reterror("Compiled without img4tool!");
+#endif //HAVE_IMG4TOOL
+}
+
 
 pair<char*,size_t>libipatcher::decryptFile3(const char *encfile, size_t encfileSize, const libipatcher::fw_key &keys){
     TestByteOrder();

@@ -31,7 +31,9 @@ namespace tihmstar {
         std::pair<char*,size_t>extractKernel(const char *fbuf, size_t fbufSize, const fw_key &keys);
         std::pair<char*,size_t>patchiBSS(const char *ibss, size_t ibssSize, const fw_key &keys);
         std::pair<char*,size_t>patchiBEC(const char *ibec, size_t ibecSize, const fw_key &keys, std::string bootargs = "");
-        
+
+        std::pair<char*,size_t>packIM4PToIMG4(const void *im4p, size_t im4pSize, const void *im4m, size_t im4mSize);
+    
         std::string version();
         bool has64bitSupport();
     }
