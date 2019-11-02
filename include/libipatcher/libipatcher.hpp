@@ -23,17 +23,7 @@ namespace tihmstar {
             fw_key iBSSKey;
             fw_key iBECKey;
         };
-        class exception : public std::exception{
-            std::string _err;
-            int _code;
-        public:
-            exception(int code, const std::string &err) : _err(err), _code(code) {};
-            exception(const std::string &err) : _err(err), _code(0) {};
-            exception(int code) : _code(code) {};
-            const char *what(){return _err.c_str();}
-            int code(){return _code;}
-        };
-        
+    
         fw_key getFirmwareKey(std::string device, std::string buildnum, std::string file);
         pwnBundle getAnyPwnBundleForDevice(std::string device);
         

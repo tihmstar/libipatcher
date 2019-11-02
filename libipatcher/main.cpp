@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <libgeneral/macros.h>
 #include <libipatcher/libipatcher.hpp>
 
 using namespace tihmstar;
@@ -27,7 +28,7 @@ int main(int argc, const char * argv[]) {
     fw_key bun;
     try {
         bun = libipatcher::getFirmwareKey("iPhone6,2", bnum, "iBEC");
-    } catch (libipatcher::exception &e) {
+    } catch (tihmstar::exception &e) {
         cout << e.what()<<endl;
     }
     

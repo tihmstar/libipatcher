@@ -194,16 +194,15 @@ string libipatcher::getFirmwareJson(std::string device, std::string buildnum){
         string url("localhost:8888/firmware/");
         url += device + "/" + buildnum;
         return getRemoteFile(url);
-    } catch (libipatcher::exception &e) {
+    } catch (...) {
         //retrying with api server
-
     }
     try {
         string url(FIRMWARE_JSON_URL_START);
         url += device + "/" + buildnum;
         return getRemoteFile(url);
-    } catch (libipatcher::exception &e) {
-        retassure(0, "failed to get FirmwareJson from Server");
+    } catch (...) {
+        reterror(0, "failed to get FirmwareJson from Server");
     }
     
     
@@ -216,15 +215,15 @@ string libipatcher::getDeviceJson(std::string device){
         string url("localhost:8888/device/");
         url += device;
         return getRemoteFile(url);
-    } catch (libipatcher::exception &e) {
+    } catch (...) {
         //retrying with local server
     }
     try {
         string url(DEVICE_JSON_URL_START);
         url += device;
         return getRemoteFile(url);
-    } catch (libipatcher::exception &e) {
-        retassure(0, "failed to get DeviceJson from Server");
+    } catch (...) {
+        reterror("failed to get DeviceJson from Server");
     }
     
     //we will never reach this
@@ -649,7 +648,7 @@ pwnBundle libipatcher::getAnyPwnBundleForDevice(std::string device){
         try {
             rt.iBSSKey = getFirmwareKey(device, buildNum, "iBSS");
             rt.iBECKey = getFirmwareKey(device, buildNum, "iBEC");
-        } catch (libipatcher::exception e) {
+        } catch (...) {
             rt.firmwareUrl.erase();
             rt.iBSSKey = {};
             rt.iBECKey = {};
