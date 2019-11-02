@@ -191,7 +191,7 @@ std::string libipatcher::getRemoteDestination(std::string url){
 
 string libipatcher::getFirmwareJson(std::string device, std::string buildnum){
     try {
-        string url("localhost/firmware/");
+        string url("localhost:8888/firmware/");
         url += device + "/" + buildnum;
         return getRemoteFile(url);
     } catch (libipatcher::exception &e) {
@@ -213,7 +213,7 @@ string libipatcher::getFirmwareJson(std::string device, std::string buildnum){
 
 string libipatcher::getDeviceJson(std::string device){
     try {
-        string url("localhost/device/");
+        string url("localhost:8888/device/");
         url += device;
         return getRemoteFile(url);
     } catch (libipatcher::exception &e) {
