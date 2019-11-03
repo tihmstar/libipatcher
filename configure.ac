@@ -39,12 +39,17 @@ OPENSSL_REQUIRES_STR="openssl >= 0.9.8"
 LIBPNG_REQUIRES_STR="libpng >= 1.2.0"
 OPENSSL_REQUIRES_STR="openssl >= 0.9.8"
 IMG4TOOL_REQUIRES_STR="libimg4tool >= 155"
-LIBOFFSETFINDER64_REQUIRES_STR="liboffsetfinder64 >= 96"
+LIBOFFSETFINDER64_REQUIRES_STR="liboffsetfinder64 >= 97"
+LIBGENERAL_REQUIRES_STR="libgeneral >= 26"
+
 
 PKG_CHECK_MODULES(libpng, $LIBPNG_REQUIRES_STR)
 PKG_CHECK_MODULES(openssl, $OPENSSL_REQUIRES_STR)
 PKG_CHECK_MODULES(libimg4tool, $IMG4TOOL_REQUIRES_STR, have_img4tool=yes, have_img4tool=no)
 PKG_CHECK_MODULES(liboffsetfinder64, $LIBOFFSETFINDER64_REQUIRES_STR, have_liboffsetfinder=yes, have_liboffsetfinder=no)
+PKG_CHECK_MODULES(libgeneral, $LIBGENERAL_REQUIRES_STR)
+
+AC_SUBST([libgeneral_requires], [$LIBGENERAL_REQUIRES_STR])
 
 
 AC_ARG_WITH([iBoot64Patcher],
