@@ -69,7 +69,7 @@ app = Flask(__name__)
 
 @app.route("/firmware/<device>/<buildid>")
 def keys(device,buildid):
-    print("Getting keys for /%s/%s",device,buildid)
+    print("Getting keys for /%s/%s"%(device,buildid))
     keys = getkeys(device,buildid)
     print(keys+"\n")
     return keys
