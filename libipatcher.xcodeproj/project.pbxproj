@@ -12,6 +12,8 @@
 		4231333E236D9225005AFE8D /* liboffsetfinder64.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4231333D236D9225005AFE8D /* liboffsetfinder64.0.dylib */; };
 		4231333F236D9225005AFE8D /* liboffsetfinder64.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 4231333D236D9225005AFE8D /* liboffsetfinder64.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		872C34731EDC491B00CFEB7A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 872C34721EDC491B00CFEB7A /* main.cpp */; };
+		87375673237175F90044E956 /* libgeneral.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 87375672237175F90044E956 /* libgeneral.0.dylib */; };
+		87375674237175F90044E956 /* libgeneral.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 87375672237175F90044E956 /* libgeneral.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		876E2F0B1EDC4A5D00D5D374 /* libipatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F0A1EDC4A5D00D5D374 /* libipatcher.cpp */; };
 		876E2F0E1EDC4AE600D5D374 /* jssy.c in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F0C1EDC4AE600D5D374 /* jssy.c */; };
 		876E2F121EDC4BC300D5D374 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 876E2F111EDC4BC300D5D374 /* libcurl.tbd */; };
@@ -33,6 +35,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				4231333B236D83A9005AFE8D /* libimg4tool.0.dylib in Embed Libraries */,
+				87375674237175F90044E956 /* libgeneral.0.dylib in Embed Libraries */,
 				4231333F236D9225005AFE8D /* liboffsetfinder64.0.dylib in Embed Libraries */,
 			);
 			name = "Embed Libraries";
@@ -54,6 +57,7 @@
 		4231333D236D9225005AFE8D /* liboffsetfinder64.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liboffsetfinder64.0.dylib; path = ../../../../usr/local/lib/liboffsetfinder64.0.dylib; sourceTree = "<group>"; };
 		872C346F1EDC491B00CFEB7A /* libipatcher */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libipatcher; sourceTree = BUILT_PRODUCTS_DIR; };
 		872C34721EDC491B00CFEB7A /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		87375672237175F90044E956 /* libgeneral.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgeneral.0.dylib; path = ../../../../usr/local/lib/libgeneral.0.dylib; sourceTree = "<group>"; };
 		876E2F0A1EDC4A5D00D5D374 /* libipatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = libipatcher.cpp; sourceTree = "<group>"; };
 		876E2F0C1EDC4AE600D5D374 /* jssy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jssy.c; path = external/jssy/jssy/jssy.c; sourceTree = SOURCE_ROOT; };
 		876E2F0D1EDC4AE600D5D374 /* jssy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jssy.h; path = external/jssy/jssy/jssy.h; sourceTree = SOURCE_ROOT; };
@@ -83,6 +87,7 @@
 				876E2F161EDC4BDD00D5D374 /* libxpwn.a in Frameworks */,
 				4231333A236D83A9005AFE8D /* libimg4tool.0.dylib in Frameworks */,
 				876E2F141EDC4BD200D5D374 /* libcommon.a in Frameworks */,
+				87375673237175F90044E956 /* libgeneral.0.dylib in Frameworks */,
 				876E2F121EDC4BC300D5D374 /* libcurl.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -130,6 +135,7 @@
 		876E2F101EDC4BC300D5D374 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				87375672237175F90044E956 /* libgeneral.0.dylib */,
 				4231333D236D9225005AFE8D /* liboffsetfinder64.0.dylib */,
 				42313339236D83A9005AFE8D /* libimg4tool.0.dylib */,
 				876E2F281EDC4DCB00D5D374 /* libz.tbd */,

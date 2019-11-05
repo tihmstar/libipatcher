@@ -483,6 +483,16 @@ int iBoot64Patch(char *deciboot, size_t decibootSize, const char *bootargs) noex
             }
             printf("%s: Added bootarg patch!\n", __FUNCTION__);
         }
+        
+        try { //do unlock nvram patch
+            auto patch = ibpf->get_unlock_nvram_patch();
+            patches.insert(patches.end(), patch.begin(), patch.end());
+        } catch (...) {
+            printf("%s: Failed getting bootarg patch!\n", __FUNCTION__);
+            return -(__LINE__);
+        }
+        printf("%s: Added unlock nvram patch!\n", __FUNCTION__);
+        
     }else{
         printf("%s: has_kernel_load is false!\n", __FUNCTION__);
     }
