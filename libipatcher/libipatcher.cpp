@@ -652,11 +652,10 @@ pair<char*,size_t>libipatcher::extractKernel(const char *encfile, size_t encfile
     return pair<char*,size_t>{decibss,decibssSize};
 }
 
-pwnBundle libipatcher::getAnyPwnBundleForDevice(std::string device){
+pwnBundle libipatcher::getAnyPwnBundleForDevice(std::string device, std::string buildnum){
     pwnBundle rt;
     ptr_smart<jssytok_t*> tokens = NULL;
     long tokensCnt = 0;
-    int findKeys= 0;
     
     string json = getDeviceJson(device);
     
@@ -675,33 +674,39 @@ pwnBundle libipatcher::getAnyPwnBundleForDevice(std::string device){
         
         jssytok_t *buildID = jssy_dictGetValueForKey(tmp, "buildid");
         
-        string buildNum = string(buildID->value,buildID->size);
+        string curbuildnum = string(buildID->value,buildID->size);
+        if (buildnum.size() && curbuildnum != buildnum) {
+            continue;
+        }
         
         string firmwareUrl = "https://api.ipsw.me/v2.1/";
         firmwareUrl += device;
         firmwareUrl += "/";
-        firmwareUrl += buildNum;
+        firmwareUrl += curbuildnum;
         firmwareUrl += "/url/dl";
         
         rt.firmwareUrl = getRemoteDestination(firmwareUrl);
         try {
-            rt.iBSSKey = getFirmwareKey(device, buildNum, "iBSS");
-            rt.iBECKey = getFirmwareKey(device, buildNum, "iBEC");
+            rt.iBSSKey = getFirmwareKey(device, curbuildnum, "iBSS");
+            rt.iBECKey = getFirmwareKey(device, curbuildnum, "iBEC");
         } catch (...) {
-            rt.firmwareUrl.erase();
-            rt.iBSSKey = {};
-            rt.iBECKey = {};
-            continue;
+            if (!buildnum.size()) {
+                //if we are looking for *any* bundle, ignore failure and keep looking
+                rt.firmwareUrl.erase();
+                rt.iBSSKey = {};
+                rt.iBECKey = {};
+                continue;
+            }else{
+                //if we are looking for a specific bundle, this is fatal
+                throw;
+            }
         }
-        findKeys = 0;
         return rt;
     }
     
-    reterror("Could not create pwnBundle for device=%s reason=%s",device.c_str(),(findKeys) ? "devices has no keys in database" : "no valid keys found");
+    reterror("Failed to create pwnBundle for device=%s buildnum=%s",device.c_str(),buildnum.size() ? buildnum.c_str() : "any");
     return {};
 }
-
-
 
 
 

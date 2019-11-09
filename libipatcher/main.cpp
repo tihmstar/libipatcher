@@ -25,6 +25,9 @@ int main(int argc, const char * argv[]) {
     
     string bnum = argv[1];
     
+    auto asd = libipatcher::getAnyPwnBundleForDevice("iPhone6,2", bnum);
+
+    
     fw_key bun;
     try {
         bun = libipatcher::getFirmwareKey("iPhone6,2", bnum, "iBEC");
