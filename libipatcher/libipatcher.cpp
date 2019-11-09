@@ -652,7 +652,7 @@ pair<char*,size_t>libipatcher::extractKernel(const char *encfile, size_t encfile
     return pair<char*,size_t>{decibss,decibssSize};
 }
 
-pwnBundle libipatcher::getAnyPwnBundleForDevice(std::string device, std::string buildnum){
+pwnBundle libipatcher::getPwnBundleForDevice(std::string device, std::string buildnum){
     pwnBundle rt;
     ptr_smart<jssytok_t*> tokens = NULL;
     long tokensCnt = 0;
