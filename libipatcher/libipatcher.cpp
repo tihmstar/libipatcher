@@ -567,7 +567,7 @@ pair<char*,size_t>libipatcher::patchiBEC(const char *ibec, size_t ibecSize, cons
     return patchfile32(ibec, ibecSize, keys, "iBoot", (void*)(bootargs.size() ? bootargs.c_str() : NULL), iBoot32Patch);
 }
 
-std::pair<char*,size_t>patchCustom(const char *file, size_t fileSize, const fw_key &keys, std::function<int(char *, size_t, void *)> patchfunc, void *parameter){
+std::pair<char*,size_t>libipatcher::patchCustom(const char *file, size_t fileSize, const fw_key &keys, std::function<int(char *, size_t, void *)> patchfunc, void *parameter){
 #ifdef HAVE_IMG4TOOL
 #ifdef HAVE_LIBOFFSETFINDER64
     bool is64Bit = false;
