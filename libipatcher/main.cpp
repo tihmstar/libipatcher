@@ -25,7 +25,7 @@ int main(int argc, const char * argv[]) {
     
     string bnum = argv[1];
     
-    auto asd = libipatcher::getAnyPwnBundleForDevice("iPhone6,2", bnum);
+    auto asd = libipatcher::getPwnBundleForDevice("iPhone6,2", bnum);
 
     
     fw_key bun;

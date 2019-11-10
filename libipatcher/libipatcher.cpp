@@ -111,11 +111,11 @@ namespace tihmstar {
         std::string getRemoteDestination(std::string url);
         std::string getFirmwareJson(std::string device, std::string buildnum);
         std::string getDeviceJson(std::string device);
-        std::pair<char*,size_t>patchfile32(const char *ibss, size_t ibssSize, const fw_key &keys, std::string findstr, std::string bootargs, std::function<int(char *, size_t, const char *)> patchfunc);
+        std::pair<char*,size_t>patchfile32(const char *ibss, size_t ibssSize, const fw_key &keys, std::string findstr, void *param, std::function<int(char *, size_t, void *)> patchfunc);
 
 #ifdef HAVE_IMG4TOOL
 #ifdef HAVE_LIBOFFSETFINDER64
-        std::pair<char*,size_t>patchfile64(const char *ibss, size_t ibssSize, const fw_key &keys, std::string findstr, std::string bootargs, std::function<int(char *, size_t, const char *)> patchfunc);
+        std::pair<char*,size_t>patchfile64(const char *ibss, size_t ibssSize, const fw_key &keys, std::string findstr, void *param, std::function<int(char *, size_t, void *)> patchfunc);
 #endif //HAVE_LIBOFFSETFINDER64
 #endif //HAVE_IMG4TOOL
     }
@@ -124,10 +124,10 @@ using namespace std;
 using namespace libipatcher;
 using namespace helpers;
 
-int iBoot32Patch(char *deciboot, size_t decibootSize, const char *bootargs) noexcept;
+int iBoot32Patch(char *deciboot, size_t decibootSize, void *bootargs) noexcept;
 #ifdef HAVE_IMG4TOOL
 #ifdef HAVE_LIBOFFSETFINDER64
-int iBoot64Patch(char *deciboot, size_t decibootSize, const char *bootargs) noexcept;
+int iBoot64Patch(char *deciboot, size_t decibootSize, void *bootargs) noexcept;
 #endif //HAVE_LIBOFFSETFINDER64
 #endif //HAVE_IMG4TOOL
 
@@ -288,7 +288,7 @@ fw_key libipatcher::getFirmwareKey(std::string device, std::string buildnum, std
     return rt;
 }
 
-pair<char*,size_t>libipatcher::patchfile32(const char *ibss, size_t ibssSize, const fw_key &keys, string findstr, string bootargs, function<int(char *, size_t, const char*)> patchfunc){
+pair<char*,size_t>libipatcher::patchfile32(const char *ibss, size_t ibssSize, const fw_key &keys, string findstr, void *param, function<int(char *, size_t, void*)> patchfunc){
     TestByteOrder();
     char *decibss = NULL;
     size_t decibssSize = 0;
@@ -319,7 +319,7 @@ pair<char*,size_t>libipatcher::patchfile32(const char *ibss, size_t ibssSize, co
     assure(*decibss != '3' && memmem(decibss, decibssSize, findstr.c_str() , findstr.size()));
     
     //patch here
-    assure(!patchfunc(decibss, decibssSize, (bootargs.size()) ? bootargs.c_str() : NULL));
+    assure(!patchfunc(decibss, decibssSize, param));
     
     //close file
     assure(patched = (char*)malloc(1));
@@ -335,7 +335,7 @@ pair<char*,size_t>libipatcher::patchfile32(const char *ibss, size_t ibssSize, co
 
 #ifdef HAVE_IMG4TOOL
 #ifdef HAVE_LIBOFFSETFINDER64
-std::pair<char*,size_t> libipatcher::patchfile64(const char *ibss, size_t ibssSize, const fw_key &keys, std::string findstr, std::string bootargs, std::function<int(char *, size_t, const char *)> patchfunc){
+std::pair<char*,size_t> libipatcher::patchfile64(const char *ibss, size_t ibssSize, const fw_key &keys, std::string findstr, void *param, std::function<int(char *, size_t, void *)> patchfunc){
     char *patched = NULL;
 
     img4tool::ASN1DERElement im4p(ibss,ibssSize);
@@ -348,7 +348,7 @@ std::pair<char*,size_t> libipatcher::patchfile64(const char *ibss, size_t ibssSi
     assure(payload.ownsBuffer());
     
     //patch here
-    assure(!patchfunc((char*)payload.payload(), payload.payloadSize(), (bootargs.size()) ? bootargs.c_str() : NULL));
+    assure(!patchfunc((char*)payload.payload(), payload.payloadSize(), param));
 
     img4tool::ASN1DERElement patchedIM4P = img4tool::getEmptyIM4PContainer(im4p[1].getStringValue().c_str(), "Patched by libipatcher");
     
@@ -363,13 +363,14 @@ std::pair<char*,size_t> libipatcher::patchfile64(const char *ibss, size_t ibssSi
 #endif //HAVE_IMG4TOOL
 
 
-int iBoot32Patch(char *deciboot, size_t decibootSize, const char *bootargs) noexcept{
+int iBoot32Patch(char *deciboot, size_t decibootSize, void *bootargs_) noexcept{
     struct iboot_img iboot_in;
     iboot_in.buf = deciboot;
     iboot_in.len = decibootSize;
     int ret = 0;
     const char* iboot_vers_str = ((char*)iboot_in.buf + IBOOT_VERS_STR_OFFSET);
-    
+    const char *bootargs = (const char*)bootargs_;
+
     iboot_in.VERS = atoi(iboot_vers_str);
     if(!iboot_in.VERS) {
         printf("%s: No iBoot version found!\n", __FUNCTION__);
@@ -434,13 +435,14 @@ int iBoot32Patch(char *deciboot, size_t decibootSize, const char *bootargs) noex
 
 #ifdef HAVE_IMG4TOOL
 #ifdef HAVE_LIBOFFSETFINDER64
-int iBoot64Patch(char *deciboot, size_t decibootSize, const char *bootargs) noexcept{
+int iBoot64Patch(char *deciboot, size_t decibootSize, void *bootargs_) noexcept{
     offsetfinder64::ibootpatchfinder64 *ibpf = NULL;
     cleanup([&]{
         if (ibpf) {
             delete ibpf;
         }
     });
+    const char *bootargs = (const char*)bootargs_;
     std::vector<offsetfinder64::patch> patches;
 
     printf("%s: Staring iBoot64Patch!\n", __FUNCTION__);
@@ -537,11 +539,11 @@ pair<char*,size_t>libipatcher::patchiBSS(const char *ibss, size_t ibssSize, cons
        //
     }
     if (is64Bit) {
-        return patchfile64(ibss, ibssSize, keys, "iBoot", "", iBoot64Patch);
+        return patchfile64(ibss, ibssSize, keys, "iBoot", NULL, iBoot64Patch);
     }
 #endif //HAVE_LIBOFFSETFINDER64
 #endif //HAVE_IMG4TOOL
-    return patchfile32(ibss, ibssSize, keys, "iBoot", "", iBoot32Patch);
+    return patchfile32(ibss, ibssSize, keys, "iBoot", NULL, iBoot32Patch);
 }
 
 pair<char*,size_t>libipatcher::patchiBEC(const char *ibec, size_t ibecSize, const libipatcher::fw_key &keys, std::string bootargs){
@@ -558,11 +560,32 @@ pair<char*,size_t>libipatcher::patchiBEC(const char *ibec, size_t ibecSize, cons
     }
     
     if (is64Bit) {
-        return patchfile64(ibec, ibecSize, keys, "iBoot", bootargs, iBoot64Patch);
+        return patchfile64(ibec, ibecSize, keys, "iBoot", (void*)(bootargs.size() ? bootargs.c_str() : NULL), iBoot64Patch);
     }
 #endif //HAVE_LIBOFFSETFINDER64
 #endif //HAVE_IMG4TOOL
-    return patchfile32(ibec, ibecSize, keys, "iBoot", bootargs, iBoot32Patch);
+    return patchfile32(ibec, ibecSize, keys, "iBoot", (void*)(bootargs.size() ? bootargs.c_str() : NULL), iBoot32Patch);
+}
+
+std::pair<char*,size_t>patchCustom(const char *file, size_t fileSize, const fw_key &keys, std::function<int(char *, size_t, void *)> patchfunc, void *parameter){
+#ifdef HAVE_IMG4TOOL
+#ifdef HAVE_LIBOFFSETFINDER64
+    bool is64Bit = false;
+    try {
+        img4tool::ASN1DERElement im4p(file,fileSize);
+        if (img4tool::isIM4P(im4p)) {
+            is64Bit = true;
+        }
+    } catch (...) {
+        //
+    }
+    
+    if (is64Bit) {
+        return patchfile64(file, fileSize, keys, "iBoot", parameter, patchfunc);
+    }
+#endif //HAVE_LIBOFFSETFINDER64
+#endif //HAVE_IMG4TOOL
+    return patchfile32(file, fileSize, keys, "iBoot", parameter, patchfunc);
 }
 
 std::pair<char*,size_t>libipatcher::packIM4PToIMG4(const void *im4p, size_t im4pSize, const void *im4m, size_t im4mSize){
