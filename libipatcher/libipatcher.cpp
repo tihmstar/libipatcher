@@ -676,9 +676,26 @@ pair<char*,size_t>libipatcher::extractKernel(const char *encfile, size_t encfile
 }
 
 pwnBundle libipatcher::getPwnBundleForDevice(std::string device, std::string buildnum){
-    pwnBundle rt;
     ptr_smart<jssytok_t*> tokens = NULL;
     long tokensCnt = 0;
+
+    auto getKeys = [](std::string device, std::string curbuildnum)->pwnBundle{
+        pwnBundle rt;
+        string firmwareUrl = "https://api.ipsw.me/v2.1/";
+        firmwareUrl += device;
+        firmwareUrl += "/";
+        firmwareUrl += curbuildnum;
+        firmwareUrl += "/url/dl";
+        
+        rt.firmwareUrl = getRemoteDestination(firmwareUrl);
+        rt.iBSSKey = getFirmwareKey(device, curbuildnum, "iBSS");
+        rt.iBECKey = getFirmwareKey(device, curbuildnum, "iBEC");
+        return rt;
+    };
+    
+    if (buildnum.size()) { //if buildnum is given, try to get keys once. error is fatal.
+        return getKeys(device,buildnum);
+    }
     
     string json = getDeviceJson(device);
     
@@ -687,44 +704,23 @@ pwnBundle libipatcher::getPwnBundleForDevice(std::string device, std::string bui
     assure(jssy_parse(json.c_str(), json.size(), tokens, tokensCnt * sizeof(jssytok_t)) == tokensCnt);
     
     assure(tokens->type == JSSY_ARRAY);
-    
+
     jssytok_t *tmp = tokens->subval;
     for (size_t i=0; i<tokens->size; tmp=tmp->next, i++) {
         jssytok_t *deviceName = jssy_dictGetValueForKey(tmp, "identifier");
         assure(deviceName && deviceName->type == JSSY_STRING);
         if (strncmp(deviceName->value, device.c_str(), deviceName->size))
             continue;
-        
         jssytok_t *buildID = jssy_dictGetValueForKey(tmp, "buildid");
         
         string curbuildnum = string(buildID->value,buildID->size);
-        if (buildnum.size() && curbuildnum != buildnum) {
+        
+        //if we are interested in *any* bundle, ignore errors until we run out of builds.
+        try {
+            return getKeys(device,curbuildnum);
+        } catch (...) {
             continue;
         }
-        
-        string firmwareUrl = "https://api.ipsw.me/v2.1/";
-        firmwareUrl += device;
-        firmwareUrl += "/";
-        firmwareUrl += curbuildnum;
-        firmwareUrl += "/url/dl";
-        
-        rt.firmwareUrl = getRemoteDestination(firmwareUrl);
-        try {
-            rt.iBSSKey = getFirmwareKey(device, curbuildnum, "iBSS");
-            rt.iBECKey = getFirmwareKey(device, curbuildnum, "iBEC");
-        } catch (...) {
-            if (!buildnum.size()) {
-                //if we are looking for *any* bundle, ignore failure and keep looking
-                rt.firmwareUrl.erase();
-                rt.iBSSKey = {};
-                rt.iBECKey = {};
-                continue;
-            }else{
-                //if we are looking for a specific bundle, this is fatal
-                throw;
-            }
-        }
-        return rt;
     }
     
     reterror("Failed to create pwnBundle for device=%s buildnum=%s",device.c_str(),buildnum.size() ? buildnum.c_str() : "any");
