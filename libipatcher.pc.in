@@ -7,5 +7,5 @@ Name: libipatcher
 Description: A small C++ wrapper around iBootPatcher
 Requires: libpng >= 1.2.0 @libgeneral_requires@
 Version: @VERSION_COMMIT_COUNT@
-Libs: -L${libdir} -libipatcher
+Libs: -L${libdir} -lipatcher
 Cflags: -I${includedir}
