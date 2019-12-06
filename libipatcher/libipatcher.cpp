@@ -281,10 +281,14 @@ fw_key libipatcher::getFirmwareKey(std::string device, std::string buildnum, std
     size_t bytes;
     hexToInts(rt.iv, &tiv, &bytes);
     retassure(bytes == 16 || bytes == 0, "IV has bad length. Expected=16 actual=%lld. Got IV=%s",bytes,rt.iv);
-    if (!bytes) *rt.iv = '0'; //indicate no key required
+    if (!bytes){
+        memset(rt.iv, 0, sizeof(rt.iv)); //indicate no key required
+    }
     hexToInts(rt.key, &tkey, &bytes);
     retassure(bytes == 32 || bytes == 0, "KEY has bad length. Expected=32 actual=%lld. Got KEY=%s",bytes,rt.key);
-    if (!bytes) *rt.key = '0'; //indicate no key required
+    if (!bytes){
+        memset(rt.key, 0, sizeof(rt.key)); //indicate no key required
+    }
     return rt;
 }
 
@@ -301,12 +305,12 @@ pair<char*,size_t>libipatcher::patchfile32(const char *ibss, size_t ibssSize, co
     
     size_t bytes;
     hexToInts(keys.iv, &iv, &bytes);
-    retassure(bytes == 16 || (bytes == 0 && *keys.iv == '0'), "IV has bad length. Expected=16 actual=%lld. Got IV=%s",bytes,keys.iv);
+    retassure(bytes == 16 || (bytes == 0 && *keys.iv == '\0'), "IV has bad length. Expected=16 actual=%lld. Got IV=%s",bytes,keys.iv);
     
     hexToInts(keys.key, &key, &bytes);
-    retassure(bytes == 32 || (bytes == 0 && *keys.key == '0'), "KEY has bad length. Expected=32 actual=%lld. Got KEY=%s",bytes,keys.key);
+    retassure(bytes == 32 || (bytes == 0 && *keys.key == '\0'), "KEY has bad length. Expected=32 actual=%lld. Got KEY=%s",bytes,keys.key);
     
-    if (*keys.key == '0' && *keys.iv == '0') { //file is not encrypted
+    if (*keys.key == '\0' && *keys.iv == '\0') { //file is not encrypted
         assure(afibss = openAbstractFile2(enc = createAbstractFileFromMemoryFile((void**)&ibss, &ibssSize), 0, 0));
     }else{
         assure(afibss = openAbstractFile2(enc = createAbstractFileFromMemoryFile((void**)&ibss, &ibssSize), key, iv));
@@ -337,10 +341,31 @@ pair<char*,size_t>libipatcher::patchfile32(const char *ibss, size_t ibssSize, co
 #ifdef HAVE_LIBOFFSETFINDER64
 std::pair<char*,size_t> libipatcher::patchfile64(const char *ibss, size_t ibssSize, const fw_key &keys, std::string findstr, void *param, std::function<int(char *, size_t, void *)> patchfunc){
     char *patched = NULL;
+    const char *key_iv = NULL;
+    const char *key_key = NULL;
+    const char *usedCompression = NULL;
+    const char *hypervisor = NULL;
+    size_t hypervisorSize = 0;
+    
+    //if one single byte isn't \x00 then set the iv
+    for (int i=0; i<sizeof(key_iv); i++) {
+        if (keys.iv[i]){
+            key_iv = keys.iv;
+            break;
+        }
+    }
 
+    //if one single byte isn't \x00 then set the key
+    for (int i=0; i<sizeof(key_key); i++) {
+        if (keys.key[i]){
+            key_key = keys.key;
+            break;
+        }
+    }
+    
     img4tool::ASN1DERElement im4p(ibss,ibssSize);
     
-    img4tool::ASN1DERElement payload = getPayloadFromIM4P(im4p, keys.iv, keys.key);
+    img4tool::ASN1DERElement payload = getPayloadFromIM4P(im4p, key_iv, key_key, &usedCompression, &hypervisor, &hypervisorSize);
     
     //check if decryption was successfull
     assure(memmem(payload.payload(), payload.payloadSize(), findstr.c_str() , findstr.size()));
@@ -350,9 +375,9 @@ std::pair<char*,size_t> libipatcher::patchfile64(const char *ibss, size_t ibssSi
     //patch here
     assure(!patchfunc((char*)payload.payload(), payload.payloadSize(), param));
 
-    img4tool::ASN1DERElement patchedIM4P = img4tool::getEmptyIM4PContainer(im4p[1].getStringValue().c_str(), "Patched by libipatcher");
+    img4tool::ASN1DERElement patchedIM4P = img4tool::getEmptyIM4PContainer(im4p[1].getStringValue().c_str(), im4p[2].getStringValue().c_str());
     
-    patchedIM4P = img4tool::appendPayloadToIM4P(patchedIM4P, payload.payload(), payload.payloadSize());
+    patchedIM4P = img4tool::appendPayloadToIM4P(patchedIM4P, payload.payload(), payload.payloadSize(), usedCompression, hypervisor, hypervisorSize);
     
     patched = (char*)malloc(patchedIM4P.size());
     memcpy(patched, patchedIM4P.buf(), patchedIM4P.size());
@@ -622,10 +647,10 @@ pair<char*,size_t>libipatcher::decryptFile3(const char *encfile, size_t encfileS
     
     size_t bytes;
     hexToInts(keys.iv, &iv, &bytes);
-    retassure(bytes == 16 || (bytes == 0 && *keys.iv == '0'), "IV has bad length. Expected=16 actual=%lld. Got IV=%s",bytes,keys.iv);
+    retassure(bytes == 16 || (bytes == 0 && *keys.iv == '\0'), "IV has bad length. Expected=16 actual=%lld. Got IV=%s",bytes,keys.iv);
     
     hexToInts(keys.key, &key, &bytes);
-    retassure(bytes == 32 || (bytes == 0 && *keys.key == '0'), "KEY has bad length. Expected=32 actual=%lld. Got KEY=%s",bytes,keys.key);
+    retassure(bytes == 32 || (bytes == 0 && *keys.key == '\0'), "KEY has bad length. Expected=32 actual=%lld. Got KEY=%s",bytes,keys.key);
 
     assure(afibss = openAbstractFile3(enc = createAbstractFileFromMemoryFile((void**)&encfile, &encfileSize), key, iv, 0));
     assure(decibssSize = afibss->getLength(afibss));
@@ -660,10 +685,10 @@ pair<char*,size_t>libipatcher::extractKernel(const char *encfile, size_t encfile
     
     size_t bytes;
     hexToInts(keys.iv, &iv, &bytes);
-    retassure(bytes == 16 || (bytes == 0 && *keys.iv == '0'), "IV has bad length. Expected=16 actual=%lld. Got IV=%s",bytes,keys.iv);
+    retassure(bytes == 16 || (bytes == 0 && *keys.iv == '\0'), "IV has bad length. Expected=16 actual=%lld. Got IV=%s",bytes,keys.iv);
     
     hexToInts(keys.key, &key, &bytes);
-    retassure(bytes == 32 || (bytes == 0 && *keys.key == '0'), "KEY has bad length. Expected=32 actual=%lld. Got KEY=%s",bytes,keys.key);
+    retassure(bytes == 32 || (bytes == 0 && *keys.key == '\0'), "KEY has bad length. Expected=32 actual=%lld. Got KEY=%s",bytes,keys.key);
 
     assure(afibss = openAbstractFile2(enc = createAbstractFileFromMemoryFile((void**)&encfile, &encfileSize), key, iv));
     assure(decibssSize = afibss->getLength(afibss));

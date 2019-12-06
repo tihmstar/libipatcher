@@ -32,7 +32,7 @@ namespace tihmstar {
         std::pair<char*,size_t>extractKernel(const char *fbuf, size_t fbufSize, const fw_key &keys);
         std::pair<char*,size_t>patchiBSS(const char *ibss, size_t ibssSize, const fw_key &keys);
         std::pair<char*,size_t>patchiBEC(const char *ibec, size_t ibecSize, const fw_key &keys, std::string bootargs = "");
-
+    
         std::pair<char*,size_t>patchCustom(const char *file, size_t fileSize, const fw_key &keys, std::function<int(char *, size_t, void *)> patchfunc, void *parameter);
     
         std::pair<char*,size_t>packIM4PToIMG4(const void *im4p, size_t im4pSize, const void *im4m, size_t im4mSize);
