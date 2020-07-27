@@ -23,8 +23,9 @@
 		876E2F211EDC4CA400D5D374 /* finders.c in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F1E1EDC4CA400D5D374 /* finders.c */; };
 		876E2F221EDC4CA400D5D374 /* functions.c in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F1F1EDC4CA400D5D374 /* functions.c */; };
 		876E2F231EDC4CA400D5D374 /* patchers.c in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F201EDC4CA400D5D374 /* patchers.c */; };
-		876E2F271EDC4D9000D5D374 /* libcrypto.1.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 876E2F261EDC4D9000D5D374 /* libcrypto.1.0.0.dylib */; };
 		876E2F291EDC4DCB00D5D374 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 876E2F281EDC4DCB00D5D374 /* libz.tbd */; };
+		8791270724CF20700071283F /* libcrypto.1.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8791270624CF20700071283F /* libcrypto.1.1.dylib */; };
+		8791270824CF20700071283F /* libcrypto.1.1.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 8791270624CF20700071283F /* libcrypto.1.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,6 +38,7 @@
 				4231333B236D83A9005AFE8D /* libimg4tool.0.dylib in Embed Libraries */,
 				87375674237175F90044E956 /* libgeneral.0.dylib in Embed Libraries */,
 				4231333F236D9225005AFE8D /* liboffsetfinder64.0.dylib in Embed Libraries */,
+				8791270824CF20700071283F /* libcrypto.1.1.dylib in Embed Libraries */,
 			);
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -72,6 +74,7 @@
 		876E2F241EDC4CF400D5D374 /* libcommonCrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcommonCrypto.tbd; path = usr/lib/system/libcommonCrypto.tbd; sourceTree = SDKROOT; };
 		876E2F261EDC4D9000D5D374 /* libcrypto.1.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.1.0.0.dylib; path = ../../../../usr/local/Cellar/openssl/1.0.2l/lib/libcrypto.1.0.0.dylib; sourceTree = "<group>"; };
 		876E2F281EDC4DCB00D5D374 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		8791270624CF20700071283F /* libcrypto.1.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.1.1.dylib; path = "../../../../usr/local/Cellar/openssl@1.1/1.1.1g/lib/libcrypto.1.1.dylib"; sourceTree = "<group>"; };
 		87D52DD31F0116150039F37D /* libipatcher.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = libipatcher.hpp; path = include/libipatcher/libipatcher.hpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -82,13 +85,13 @@
 			files = (
 				876E2F291EDC4DCB00D5D374 /* libz.tbd in Frameworks */,
 				4231333E236D9225005AFE8D /* liboffsetfinder64.0.dylib in Frameworks */,
-				876E2F271EDC4D9000D5D374 /* libcrypto.1.0.0.dylib in Frameworks */,
 				876E2F181EDC4C1300D5D374 /* libpng16.16.dylib in Frameworks */,
 				876E2F161EDC4BDD00D5D374 /* libxpwn.a in Frameworks */,
 				4231333A236D83A9005AFE8D /* libimg4tool.0.dylib in Frameworks */,
 				876E2F141EDC4BD200D5D374 /* libcommon.a in Frameworks */,
 				87375673237175F90044E956 /* libgeneral.0.dylib in Frameworks */,
 				876E2F121EDC4BC300D5D374 /* libcurl.tbd in Frameworks */,
+				8791270724CF20700071283F /* libcrypto.1.1.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,6 +138,7 @@
 		876E2F101EDC4BC300D5D374 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8791270624CF20700071283F /* libcrypto.1.1.dylib */,
 				87375672237175F90044E956 /* libgeneral.0.dylib */,
 				4231333D236D9225005AFE8D /* liboffsetfinder64.0.dylib */,
 				42313339236D83A9005AFE8D /* libimg4tool.0.dylib */,
@@ -342,11 +346,11 @@
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
 					/usr/local/Cellar/libpng/1.6.37/lib,
+					"/usr/local/Cellar/openssl@1.1/1.1.1g/lib",
 					"$(SDKROOT)/usr/lib/system",
-					/usr/local/Cellar/openssl/1.0.2t/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/include $(SRCROOT)/external/iBoot32Patcher /usr/local/include /usr/local/opt/openssl/lib $(SRCROOT)/external/libgeneral/include";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/include $(SRCROOT)/external/iBoot32Patcher /usr/local/include /usr/local/Cellar/openssl@1.1/1.1.1g/include $(SRCROOT)/external/libgeneral/include";
 			};
 			name = Debug;
 		};
@@ -357,11 +361,11 @@
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
 					/usr/local/Cellar/libpng/1.6.37/lib,
+					"/usr/local/Cellar/openssl@1.1/1.1.1g/lib",
 					"$(SDKROOT)/usr/lib/system",
-					/usr/local/Cellar/openssl/1.0.2t/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/include $(SRCROOT)/external/iBoot32Patcher /usr/local/include /usr/local/opt/openssl/lib $(SRCROOT)/external/libgeneral/include";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/include $(SRCROOT)/external/iBoot32Patcher /usr/local/include /usr/local/Cellar/openssl@1.1/1.1.1g/include $(SRCROOT)/external/libgeneral/include";
 			};
 			name = Release;
 		};

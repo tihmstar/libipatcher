@@ -171,6 +171,7 @@ string libipatcher::getRemoteFile(std::string url){
 std::string libipatcher::getRemoteDestination(std::string url){
     char* location = NULL; //don't free me manually
     string buf;
+    uint64_t curlcode = 0;
     CURL *mc = curl_easy_init();
     assure(mc);
     
@@ -180,6 +181,9 @@ std::string libipatcher::getRemoteDestination(std::string url){
     curl_easy_setopt(mc, CURLOPT_NOBODY, 1);
     
     assure(curl_easy_perform(mc) == CURLE_OK);
+    
+    curl_easy_getinfo(mc, CURLINFO_RESPONSE_CODE, &curlcode);
+    assure(curlcode < 400);
     
     assure(curl_easy_getinfo(mc, CURLINFO_REDIRECT_URL, &location) == CURLE_OK);
     buf = location;
@@ -712,7 +716,11 @@ pwnBundle libipatcher::getPwnBundleForDevice(std::string device, std::string bui
         firmwareUrl += curbuildnum;
         firmwareUrl += "/url/dl";
         
-        rt.firmwareUrl = getRemoteDestination(firmwareUrl);
+        try{
+            rt.firmwareUrl = getRemoteDestination(firmwareUrl);
+        }catch(...){
+            error("failed to get firmware url");
+        }
         rt.iBSSKey = getFirmwareKey(device, curbuildnum, "iBSS");
         rt.iBECKey = getFirmwareKey(device, curbuildnum, "iBEC");
         return rt;

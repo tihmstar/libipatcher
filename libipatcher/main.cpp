@@ -18,6 +18,9 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     cout << "start" << endl;
     
+    auto asd = libipatcher::getPwnBundleForDevice("iPhone10,1", "18A5332f");
+
+    
     if (argc < 2){
         cout << "need buildnum"<<endl;
         return 1;
@@ -25,7 +28,6 @@ int main(int argc, const char * argv[]) {
     
     string bnum = argv[1];
     
-    auto asd = libipatcher::getPwnBundleForDevice("iPhone6,2", bnum);
 
     
     fw_key bun;
