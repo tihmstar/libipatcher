@@ -381,6 +381,14 @@ std::pair<char*,size_t> libipatcher::patchfile64(const char *ibss, size_t ibssSi
 
     img4tool::ASN1DERElement patchedIM4P = img4tool::getEmptyIM4PContainer(im4p[1].getStringValue().c_str(), im4p[2].getStringValue().c_str());
     
+    {
+#warning BUG WORKAROUND recompressing images with bvx2 makes them not boot for some reason
+        if (strcmp(usedCompression, "bvx2") == 0) {
+            warning("BUG WORKAROUND recompressing images with bvx2 makes them not boot for some reason. Skipping compression");
+            usedCompression = NULL;
+        }
+    }
+    
     patchedIM4P = img4tool::appendPayloadToIM4P(patchedIM4P, payload.payload(), payload.payloadSize(), usedCompression, hypervisor, hypervisorSize);
     
     patched = (char*)malloc(patchedIM4P.size());
@@ -476,7 +484,7 @@ int iBoot64Patch(char *deciboot, size_t decibootSize, void *bootargs_) noexcept{
 
     printf("%s: Staring iBoot64Patch!\n", __FUNCTION__);
     try {
-        ibpf = new offsetfinder64::ibootpatchfinder64(deciboot,decibootSize);
+        ibpf = offsetfinder64::ibootpatchfinder64::make_ibootpatchfinder64(deciboot,decibootSize);
     } catch (...) {
         printf("%s: Failed initing ibootpatchfinder64!\n", __FUNCTION__);
         return -(__LINE__);
