@@ -37,7 +37,7 @@ namespace tihmstar {
     
         std::pair<char*,size_t>packIM4PToIMG4(const void *im4p, size_t im4pSize, const void *im4m, size_t im4mSize);
     
-        std::string version();
+        const char *version();
         bool has64bitSupport();
     }
 }

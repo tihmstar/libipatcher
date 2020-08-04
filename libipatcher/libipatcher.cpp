@@ -132,8 +132,8 @@ int iBoot64Patch(char *deciboot, size_t decibootSize, void *bootargs) noexcept;
 #endif //HAVE_IMG4TOOL
 
 
-string libipatcher::version(){
-    return {"Libipatcher Version: " VERSION_COMMIT_SHA " - " VERSION_COMMIT_COUNT};
+const char *libipatcher::version(){
+    return VERSION_STRING;
 }
 
 bool libipatcher::has64bitSupport(){
