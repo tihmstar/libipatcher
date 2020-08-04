@@ -46,6 +46,8 @@ PKG_CHECK_MODULES(libimg4tool, $IMG4TOOL_REQUIRES_STR, have_img4tool=yes, have_i
 PKG_CHECK_MODULES(liboffsetfinder64, $LIBOFFSETFINDER64_REQUIRES_STR, have_liboffsetfinder=yes, have_liboffsetfinder=no)
 PKG_CHECK_MODULES(libgeneral, $LIBGENERAL_REQUIRES_STR)
 
+AC_SUBST([img4tool_requires], [$IMG4TOOL_REQUIRES_STR])
+AC_SUBST([liboffsetfinder64_requires], [$LIBOFFSETFINDER64_REQUIRES_STR])
 AC_SUBST([libgeneral_requires], [$LIBGENERAL_REQUIRES_STR])
 
 
