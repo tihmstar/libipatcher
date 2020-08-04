@@ -33,14 +33,11 @@ CXXFLAGS+=" -std=c++11"
 CFLAGS+=" -std=c11"
 
 # Checks for libraries.
-OPENSSL_REQUIRES_STR="openssl >= 0.9.8"
-
-
 LIBPNG_REQUIRES_STR="libpng >= 1.2.0"
 OPENSSL_REQUIRES_STR="openssl >= 0.9.8"
-IMG4TOOL_REQUIRES_STR="libimg4tool >= 174"
-LIBOFFSETFINDER64_REQUIRES_STR="liboffsetfinder64 >= 107"
-LIBGENERAL_REQUIRES_STR="libgeneral >= 26"
+IMG4TOOL_REQUIRES_STR="libimg4tool >= 190"
+LIBOFFSETFINDER64_REQUIRES_STR="liboffsetfinder64 >= 120"
+LIBGENERAL_REQUIRES_STR="libgeneral >= 32"
 
 
 PKG_CHECK_MODULES(libpng, $LIBPNG_REQUIRES_STR)
