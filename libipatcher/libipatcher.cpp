@@ -383,7 +383,7 @@ std::pair<char*,size_t> libipatcher::patchfile64(const char *ibss, size_t ibssSi
     
     {
 #warning BUG WORKAROUND recompressing images with bvx2 makes them not boot for some reason
-        if (strcmp(usedCompression, "bvx2") == 0) {
+        if (usedCompression && strcmp(usedCompression, "bvx2") == 0) {
             warning("BUG WORKAROUND recompressing images with bvx2 makes them not boot for some reason. Skipping compression");
             usedCompression = NULL;
         }
