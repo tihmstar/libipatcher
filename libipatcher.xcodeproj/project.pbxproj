@@ -9,23 +9,19 @@
 /* Begin PBXBuildFile section */
 		4231333A236D83A9005AFE8D /* libimg4tool.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 42313339236D83A9005AFE8D /* libimg4tool.0.dylib */; };
 		4231333B236D83A9005AFE8D /* libimg4tool.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 42313339236D83A9005AFE8D /* libimg4tool.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		4231333E236D9225005AFE8D /* liboffsetfinder64.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4231333D236D9225005AFE8D /* liboffsetfinder64.0.dylib */; };
-		4231333F236D9225005AFE8D /* liboffsetfinder64.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 4231333D236D9225005AFE8D /* liboffsetfinder64.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		872C34731EDC491B00CFEB7A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 872C34721EDC491B00CFEB7A /* main.cpp */; };
 		87375673237175F90044E956 /* libgeneral.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 87375672237175F90044E956 /* libgeneral.0.dylib */; };
 		87375674237175F90044E956 /* libgeneral.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 87375672237175F90044E956 /* libgeneral.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		876E2F0B1EDC4A5D00D5D374 /* libipatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F0A1EDC4A5D00D5D374 /* libipatcher.cpp */; };
 		876E2F0E1EDC4AE600D5D374 /* jssy.c in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F0C1EDC4AE600D5D374 /* jssy.c */; };
 		876E2F121EDC4BC300D5D374 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 876E2F111EDC4BC300D5D374 /* libcurl.tbd */; };
-		876E2F141EDC4BD200D5D374 /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 876E2F131EDC4BD200D5D374 /* libcommon.a */; };
-		876E2F161EDC4BDD00D5D374 /* libxpwn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 876E2F151EDC4BDD00D5D374 /* libxpwn.a */; };
-		876E2F181EDC4C1300D5D374 /* libpng16.16.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 876E2F171EDC4C1300D5D374 /* libpng16.16.dylib */; };
-		876E2F211EDC4CA400D5D374 /* finders.c in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F1E1EDC4CA400D5D374 /* finders.c */; };
-		876E2F221EDC4CA400D5D374 /* functions.c in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F1F1EDC4CA400D5D374 /* functions.c */; };
-		876E2F231EDC4CA400D5D374 /* patchers.c in Sources */ = {isa = PBXBuildFile; fileRef = 876E2F201EDC4CA400D5D374 /* patchers.c */; };
 		876E2F291EDC4DCB00D5D374 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 876E2F281EDC4DCB00D5D374 /* libz.tbd */; };
-		8791270724CF20700071283F /* libcrypto.1.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8791270624CF20700071283F /* libcrypto.1.1.dylib */; };
-		8791270824CF20700071283F /* libcrypto.1.1.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 8791270624CF20700071283F /* libcrypto.1.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		87758F2E26C25CAB000265B9 /* libfragmentzip.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 87758F2D26C25CAB000265B9 /* libfragmentzip.0.dylib */; };
+		87758F2F26C25CAB000265B9 /* libfragmentzip.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 87758F2D26C25CAB000265B9 /* libfragmentzip.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		87F83B4526985CAD006D5C45 /* libimg3tool.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 87F83B4426985CAD006D5C45 /* libimg3tool.0.dylib */; };
+		87F83B4626985CAD006D5C45 /* libimg3tool.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 87F83B4426985CAD006D5C45 /* libimg3tool.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		87F83B4826985CBA006D5C45 /* libpatchfinder.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 87F83B4726985CBA006D5C45 /* libpatchfinder.0.dylib */; };
+		87F83B4926985CBA006D5C45 /* libpatchfinder.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 87F83B4726985CBA006D5C45 /* libpatchfinder.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,10 +31,11 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				87F83B4626985CAD006D5C45 /* libimg3tool.0.dylib in Embed Libraries */,
+				87F83B4926985CBA006D5C45 /* libpatchfinder.0.dylib in Embed Libraries */,
+				87758F2F26C25CAB000265B9 /* libfragmentzip.0.dylib in Embed Libraries */,
 				4231333B236D83A9005AFE8D /* libimg4tool.0.dylib in Embed Libraries */,
 				87375674237175F90044E956 /* libgeneral.0.dylib in Embed Libraries */,
-				4231333F236D9225005AFE8D /* liboffsetfinder64.0.dylib in Embed Libraries */,
-				8791270824CF20700071283F /* libcrypto.1.1.dylib in Embed Libraries */,
 			);
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -68,14 +65,14 @@
 		876E2F151EDC4BDD00D5D374 /* libxpwn.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libxpwn.a; path = ../../../../usr/local/lib/libxpwn.a; sourceTree = "<group>"; };
 		876E2F171EDC4C1300D5D374 /* libpng16.16.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng16.16.dylib; path = ../../../../usr/local/Cellar/libpng/1.6.29/lib/libpng16.16.dylib; sourceTree = "<group>"; };
 		876E2F191EDC4C5000D5D374 /* libcorecrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcorecrypto.tbd; path = usr/lib/system/libcorecrypto.tbd; sourceTree = SDKROOT; };
-		876E2F1E1EDC4CA400D5D374 /* finders.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = finders.c; path = external/iBoot32Patcher/finders.c; sourceTree = SOURCE_ROOT; };
-		876E2F1F1EDC4CA400D5D374 /* functions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = functions.c; path = external/iBoot32Patcher/functions.c; sourceTree = SOURCE_ROOT; };
-		876E2F201EDC4CA400D5D374 /* patchers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = patchers.c; path = external/iBoot32Patcher/patchers.c; sourceTree = SOURCE_ROOT; };
 		876E2F241EDC4CF400D5D374 /* libcommonCrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcommonCrypto.tbd; path = usr/lib/system/libcommonCrypto.tbd; sourceTree = SDKROOT; };
 		876E2F261EDC4D9000D5D374 /* libcrypto.1.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.1.0.0.dylib; path = ../../../../usr/local/Cellar/openssl/1.0.2l/lib/libcrypto.1.0.0.dylib; sourceTree = "<group>"; };
 		876E2F281EDC4DCB00D5D374 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		87758F2D26C25CAB000265B9 /* libfragmentzip.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfragmentzip.0.dylib; path = ../../../../usr/local/lib/libfragmentzip.0.dylib; sourceTree = "<group>"; };
 		8791270624CF20700071283F /* libcrypto.1.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.1.1.dylib; path = "../../../../usr/local/Cellar/openssl@1.1/1.1.1g/lib/libcrypto.1.1.dylib"; sourceTree = "<group>"; };
 		87D52DD31F0116150039F37D /* libipatcher.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = libipatcher.hpp; path = include/libipatcher/libipatcher.hpp; sourceTree = SOURCE_ROOT; };
+		87F83B4426985CAD006D5C45 /* libimg3tool.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libimg3tool.0.dylib; path = ../../../../usr/local/lib/libimg3tool.0.dylib; sourceTree = "<group>"; };
+		87F83B4726985CBA006D5C45 /* libpatchfinder.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpatchfinder.0.dylib; path = ../../../../usr/local/lib/libpatchfinder.0.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,15 +80,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87F83B4526985CAD006D5C45 /* libimg3tool.0.dylib in Frameworks */,
 				876E2F291EDC4DCB00D5D374 /* libz.tbd in Frameworks */,
-				4231333E236D9225005AFE8D /* liboffsetfinder64.0.dylib in Frameworks */,
-				876E2F181EDC4C1300D5D374 /* libpng16.16.dylib in Frameworks */,
-				876E2F161EDC4BDD00D5D374 /* libxpwn.a in Frameworks */,
+				87758F2E26C25CAB000265B9 /* libfragmentzip.0.dylib in Frameworks */,
 				4231333A236D83A9005AFE8D /* libimg4tool.0.dylib in Frameworks */,
-				876E2F141EDC4BD200D5D374 /* libcommon.a in Frameworks */,
+				87F83B4826985CBA006D5C45 /* libpatchfinder.0.dylib in Frameworks */,
 				87375673237175F90044E956 /* libgeneral.0.dylib in Frameworks */,
 				876E2F121EDC4BC300D5D374 /* libcurl.tbd in Frameworks */,
-				8791270724CF20700071283F /* libcrypto.1.1.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,7 +124,6 @@
 		876E2F0F1EDC4AEA00D5D374 /* external */ = {
 			isa = PBXGroup;
 			children = (
-				876E2F1D1EDC4C8E00D5D374 /* iBoot32Patcher */,
 				876E2F1B1EDC4C6900D5D374 /* jssy */,
 			);
 			name = external;
@@ -138,6 +132,9 @@
 		876E2F101EDC4BC300D5D374 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				87758F2D26C25CAB000265B9 /* libfragmentzip.0.dylib */,
+				87F83B4726985CBA006D5C45 /* libpatchfinder.0.dylib */,
+				87F83B4426985CAD006D5C45 /* libimg3tool.0.dylib */,
 				8791270624CF20700071283F /* libcrypto.1.1.dylib */,
 				87375672237175F90044E956 /* libgeneral.0.dylib */,
 				4231333D236D9225005AFE8D /* liboffsetfinder64.0.dylib */,
@@ -161,16 +158,6 @@
 				876E2F0C1EDC4AE600D5D374 /* jssy.c */,
 			);
 			name = jssy;
-			sourceTree = "<group>";
-		};
-		876E2F1D1EDC4C8E00D5D374 /* iBoot32Patcher */ = {
-			isa = PBXGroup;
-			children = (
-				876E2F1E1EDC4CA400D5D374 /* finders.c */,
-				876E2F1F1EDC4CA400D5D374 /* functions.c */,
-				876E2F201EDC4CA400D5D374 /* patchers.c */,
-			);
-			name = iBoot32Patcher;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -233,9 +220,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				872C34731EDC491B00CFEB7A /* main.cpp in Sources */,
-				876E2F231EDC4CA400D5D374 /* patchers.c in Sources */,
-				876E2F211EDC4CA400D5D374 /* finders.c in Sources */,
-				876E2F221EDC4CA400D5D374 /* functions.c in Sources */,
 				876E2F0E1EDC4AE600D5D374 /* jssy.c in Sources */,
 				876E2F0B1EDC4A5D00D5D374 /* libipatcher.cpp in Sources */,
 			);
@@ -341,8 +325,11 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
-					"HAVE_LIBOFFSETFINDER64=1",
-					"HAVE_IMG4TOOL=1",
+					HAVE_IMG3TOOL,
+					HAVE_IMG4TOOL,
+					WITH_IBOOT32PATCHER,
+					WITH_IBOOT64PATCHER,
+					HAVE_LIBFRAGMENTZIP,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,

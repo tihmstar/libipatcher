@@ -25,7 +25,13 @@ AC_PROG_CC
 AC_MSG_CHECKING([whether we need platform-specific build settings])
 case $host_os in
   darwin* )
+        AC_MSG_RESULT([${host_os}])
         CXXFLAGS+=" -stdlib=libc++"
+        ;;
+  *mingw32*|*cygwin*)
+        AC_MSG_RESULT([${host_os}])
+        win32=true
+        LDFLAGS+=" -no-undefined"
         ;;
 esac
 
@@ -33,23 +39,30 @@ CXXFLAGS+=" -std=c++11"
 CFLAGS+=" -std=c11"
 
 # Checks for libraries.
-LIBPNG_REQUIRES_STR="libpng >= 1.2.0"
-OPENSSL_REQUIRES_STR="openssl >= 0.9.8"
-IMG4TOOL_REQUIRES_STR="libimg4tool >= 190"
-LIBOFFSETFINDER64_REQUIRES_STR="liboffsetfinder64 >= 120"
-LIBGENERAL_REQUIRES_STR="libgeneral >= 32"
+LIBFRAGMENTZIP_REQUIRES_STR="libfragmentzip >= 72"
+IMG4TOOL_REQUIRES_STR="libimg4tool >= 206"
+IMG3TOOL_REQUIRES_STR="libimg3tool >= 1"
+LIBPATCHFINDER_REQUIRES_STR="libpatchfinder >= 4"
+LIBGENERAL_REQUIRES_STR="libgeneral >= 49"
 
 
-PKG_CHECK_MODULES(libpng, $LIBPNG_REQUIRES_STR)
-PKG_CHECK_MODULES(openssl, $OPENSSL_REQUIRES_STR)
+PKG_CHECK_MODULES(libfragmentzip, $LIBFRAGMENTZIP_REQUIRES_STR, have_libfragmentzip=yes, have_libfragmentzip=no)
+PKG_CHECK_MODULES(libimg3tool, $IMG3TOOL_REQUIRES_STR, have_img3tool=yes, have_img3tool=no)
 PKG_CHECK_MODULES(libimg4tool, $IMG4TOOL_REQUIRES_STR, have_img4tool=yes, have_img4tool=no)
-PKG_CHECK_MODULES(liboffsetfinder64, $LIBOFFSETFINDER64_REQUIRES_STR, have_liboffsetfinder=yes, have_liboffsetfinder=no)
+PKG_CHECK_MODULES(libpatchfinder, $LIBPATCHFINDER_REQUIRES_STR)
 PKG_CHECK_MODULES(libgeneral, $LIBGENERAL_REQUIRES_STR)
 
+AC_SUBST([libfragmentzip_requires], [$LIBFRAGMENTZIP_REQUIRES_STR])
+AC_SUBST([img3tool_requires], [$IMG3TOOL_REQUIRES_STR])
 AC_SUBST([img4tool_requires], [$IMG4TOOL_REQUIRES_STR])
-AC_SUBST([liboffsetfinder64_requires], [$LIBOFFSETFINDER64_REQUIRES_STR])
+AC_SUBST([libpatchfinder_requires], [$LIBPATCHFINDER_REQUIRES_STR])
 AC_SUBST([libgeneral_requires], [$LIBGENERAL_REQUIRES_STR])
 
+AC_ARG_WITH([libfragmentzip],
+            [AS_HELP_STRING([--without-libfragmentzip],
+            [do not build with libfragmentzip support @<:@default=yes@:>@])],
+            [with_libfragmentzip=no],
+            [with_libfragmentzip=yes])
 
 AC_ARG_WITH([iBoot64Patcher],
             [AS_HELP_STRING([--without-iBoot64Patcher],
@@ -57,29 +70,64 @@ AC_ARG_WITH([iBoot64Patcher],
             [with_ib64p=no],
             [with_ib64p=yes])
 
+AC_ARG_WITH([iBoot32Patcher],
+            [AS_HELP_STRING([--without-iBoot32Patcher],
+            [do not build with iBoot32Patcher support @<:@default=yes@:>@])],
+            [with_ib32p=no],
+            [with_ib32p=yes])
+
+AC_ARG_WITH([ipsw-me-support],
+            [AS_HELP_STRING([--without-ipsw-me-support],
+            [do not build with ipsw.me support @<:@default=no@:>@])],
+            [with_ipsw_me=no],
+            [with_ipsw_me=yes])
+
+AM_CONDITIONAL([WITH_IBOOT32PATCHER], [test x$with_ib32p = xyes])
+AM_CONDITIONAL([WITH_IBOOT64PATCHER], [test x$with_ib64p = xyes])
+AM_CONDITIONAL(WITH_IPSW_ME_SUPPORT, test "x$with_ipsw_me" = "xyes")
+
+
+if test "x$with_libfragmentzip" == "xyes"; then
+  if test "x$have_libfragmentzip" != "xyes"; then
+    AC_MSG_ERROR([requested building with libfragmentzip, but library could not be found])
+  fi
+
+  AC_DEFINE(HAVE_LIBFRAGMENTZIP, 1, [Define if you have libfragmentzip])
+
+  AC_SUBST(libfragmentzip_CFLAGS)
+  AC_SUBST(libfragmentzip_LIBS)
+else
+  echo "*** Note: libfragmentzip has been disabled ***"
+fi
 
 if test "x$with_ib64p" == "xyes"; then
   if test "x$have_img4tool" != "xyes"; then
     AC_MSG_ERROR([requested building with iBoot64Patcher, but img4tool could not be found])
   fi
-  if test "x$have_liboffsetfinder" != "xyes"; then
-    AC_MSG_ERROR([requested building with iBoot64Patcher, but liboffsetfinder64 could not be found])
-  fi
-
 
   AC_DEFINE(HAVE_IMG4TOOL, 1, [Define if you have img4tool])
-  AC_DEFINE(HAVE_LIBOFFSETFINDER64, 1, [Define if you have liboffsetfinder64])
-
+  AC_DEFINE(WITH_IBOOT64PATCHER, 1, [Define if you build with iBoot64Patcher support])
 
   AC_SUBST(libimg4tool_CFLAGS)
   AC_SUBST(libimg4tool_LIBS)
-
-  AC_SUBST(liboffsetfinder64_CFLAGS)
-  AC_SUBST(liboffsetfinder64_LIBS)
 else
   echo "*** Note: iBoot64Patcher has been disabled ***"
 fi
 
+if test "x$with_ib32p" == "xyes"; then
+  if test "x$have_img3tool" != "xyes"; then
+    AC_MSG_ERROR([requested building with iBoot32Patcher, but img3tool could not be found])
+  fi
+
+  AC_DEFINE(HAVE_IMG3TOOL, 1, [Define if you have img3tool])
+  AC_DEFINE(WITH_IBOOT32PATCHER, 1, [Define if you build with iBoot64Patcher support])
+
+  AC_SUBST(libimg3tool_CFLAGS)
+  AC_SUBST(libimg3tool_LIBS)
+
+else
+  echo "*** Note: iBoot32Patcher has been disabled ***"
+fi
 
 # Checks for header files.
 AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h string.h])
@@ -94,8 +142,7 @@ AC_TYPE_UINT32_T
 AC_TYPE_UINT8_T
 
 # Checks for library functions.
-AC_FUNC_MALLOC
-AC_CHECK_FUNCS([memset])
+AC_CHECK_FUNCS([memset memmem])
 
 AC_CONFIG_FILES([Makefile
                  include/Makefile
@@ -108,7 +155,10 @@ Configuration for $PACKAGE-$VERSION:
 -------------------------------------------
 
   install prefix ..........: $prefix
-  with iBoot64Patcher .....: $with_ib64p"
+  with iBoot32Patcher .....: $with_ib32p
+  with iBoot64Patcher .....: $with_ib64p
+  with libfragmentzip .....: $with_libfragmentzip
+  with ipsw.me support ....: $with_ipsw_me"
 
 echo "  compiler ................: ${CC}
 

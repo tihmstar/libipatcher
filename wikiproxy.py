@@ -20,14 +20,14 @@ def getFirmwareKeysPage(device, buildnum):
     link = re.search("\/wiki\/.*_"+buildnum+"_\("+device+"\)",html)
     pagelink = wiki+link.group()
     return pagelink
-    
+
 
 def getkeys(device, buildnum):
     rsp = {}
     pagelink = getFirmwareKeysPage(device, buildnum)
     r = requests.get(pagelink)
     html = r.text
-    
+
     rsp["identifier"] = device
     rsp["buildid"] = buildnum
     rsp["codename"] = pagelink.split("_")[0].split("/")[-1]
@@ -42,17 +42,21 @@ def getkeys(device, buildnum):
             rsp["updateramdiskexists"] = True
         if id == "Restore_Ramdisk":
             rsp["restoreramdiskexists"] = True
-        
+
         key = {}
         name = span.text()
         if name == "Root Filesystem":
             name = "RootFS"
         fname = span.parent().next("* > span.keypage-filename").text()
-        
-        iv = span.parent().siblings("*>*>code#keypage-"+name.lower()+"-iv").text()
-        key_ = span.parent().siblings("*>*>code#keypage-"+name.lower()+"-key").text()
-        kbag = span.parent().siblings("*>*>code#keypage-"+name.lower()+"-kbag").text()
-        
+
+        name = name.replace(" ","")
+        try:
+            iv = span.parent().siblings("*>*>code#keypage-"+name.lower()+"-iv").text()
+            key_ = span.parent().siblings("*>*>code#keypage-"+name.lower()+"-key").text()
+            kbag = span.parent().siblings("*>*>code#keypage-"+name.lower()+"-kbag").text()
+        except:
+            continue
+
         key["image"] = name
         key["filename"] = fname #WARNING This is the wrong format! (usually this would be full path instead of just the filename)
         key["date"] = datetime.now().isoformat()
@@ -64,7 +68,7 @@ def getkeys(device, buildnum):
         keys.append(key)
     rsp["keys"] = keys
     return json.dumps(rsp)
-    
+
 app = Flask(__name__)
 
 @app.route("/firmware/<device>/<buildid>")

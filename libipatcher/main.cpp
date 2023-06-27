@@ -19,7 +19,6 @@ int main(int argc, const char * argv[]) {
     cout << "start" << endl;
     
     auto asd = libipatcher::getPwnBundleForDevice("iPhone10,1", "18A5332f");
-
     
     if (argc < 2){
         cout << "need buildnum"<<endl;
@@ -32,7 +31,7 @@ int main(int argc, const char * argv[]) {
     
     fw_key bun;
     try {
-        bun = libipatcher::getFirmwareKey("iPhone6,2", bnum, "iBEC");
+        bun = libipatcher::getFirmwareKeyForComponent("iPhone6,2", bnum, "iBEC");
     } catch (tihmstar::exception &e) {
         cout << e.what()<<endl;
     }
