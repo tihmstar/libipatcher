@@ -6,7 +6,7 @@ noinst_LTLIBRARIES = libjssy.la
 lib_LTLIBRARIES = libipatcher.la
 
 libjssy_la_CFLAGS = $(AM_CFLAGS)
-libjssy_la_SOURCES = jssy.c
+libjssy_la_SOURCES = $(top_srcdir)/external/jssy/jssy/jssy.c
 
 libipatcher_la_CXXFLAGS = $(AM_CFLAGS)
 libipatcher_la_LIBADD = libjssy.la $(AM_LDFLAGS)
