@@ -40,10 +40,10 @@ CFLAGS+=" -std=c11"
 
 # Checks for libraries.
 LIBFRAGMENTZIP_REQUIRES_STR="libfragmentzip >= 67"
-IMG4TOOL_REQUIRES_STR="libimg4tool >= 198"
-IMG3TOOL_REQUIRES_STR="libimg3tool >= 2"
-LIBPATCHFINDER_REQUIRES_STR="libpatchfinder >= 4"
-LIBGENERAL_REQUIRES_STR="libgeneral >= 65"
+IMG4TOOL_REQUIRES_STR="libimg4tool >= 202"
+IMG3TOOL_REQUIRES_STR="libimg3tool >= 8"
+LIBPATCHFINDER_REQUIRES_STR="libpatchfinder >= 153"
+LIBGENERAL_REQUIRES_STR="libgeneral >= 75"
 
 
 PKG_CHECK_MODULES(libfragmentzip, $LIBFRAGMENTZIP_REQUIRES_STR, have_libfragmentzip=yes, have_libfragmentzip=no)
