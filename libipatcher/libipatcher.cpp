@@ -137,10 +137,10 @@ namespace tihmstar {
         }
         std::string getRemoteFile(std::string url);
         std::string getRemoteDestination(std::string url);
-        std::string getFirmwareJson(std::string device, std::string buildnum, uint64_t cpid = 0);
+        std::string getFirmwareJson(std::string device, std::string buildnum, uint32_t cpid = 0);
         std::string getDeviceJson(std::string device);
 #ifdef HAVE_LIBFRAGMENTZIP
-        std::string getFirmwareJsonFromZip(std::string device, std::string buildnum, std::string zipURL, uint64_t cpid = 0);
+        std::string getFirmwareJsonFromZip(std::string device, std::string buildnum, std::string zipURL, uint32_t cpid = 0);
         std::string getDeviceJsonFromZip(std::string device, std::string zipURL);
 #endif //HAVE_LIBFRAGMENTZIP
     
@@ -241,7 +241,7 @@ std::string libipatcher::getRemoteDestination(std::string url){
 }
 
 
-string libipatcher::getFirmwareJson(std::string device, std::string buildnum, uint64_t cpid){
+string libipatcher::getFirmwareJson(std::string device, std::string buildnum, uint32_t cpid){
     std::string cpid_str;
     if (cpid) {
         char buf[0x100] = {};
@@ -298,7 +298,7 @@ string libipatcher::getDeviceJson(std::string device){
 }
 
 #ifdef HAVE_LIBFRAGMENTZIP
-std::string libipatcher::getFirmwareJsonFromZip(std::string device, std::string buildnum, std::string zipURL, uint64_t cpid){
+std::string libipatcher::getFirmwareJsonFromZip(std::string device, std::string buildnum, std::string zipURL, uint32_t cpid){
     fragmentzip_t *fz = NULL;
     char *outBuf = NULL;
     cleanup([&]{
@@ -351,7 +351,7 @@ string libipatcher::getDeviceJsonFromZip(std::string device, std::string zipURL)
 #endif //HAVE_LIBFRAGMENTZIP
 
 
-fw_key getFirmwareKeyForComparator(std::string device, std::string buildnum, std::function<bool(const jssytok_t *e)> comparator, uint64_t cpid, std::string zipURL){
+fw_key getFirmwareKeyForComparator(std::string device, std::string buildnum, std::function<bool(const jssytok_t *e)> comparator, uint32_t cpid, std::string zipURL){
     jssytok_t* tokens = NULL;
     unsigned int * tkey = NULL;
     unsigned int * tiv = NULL;
@@ -406,14 +406,14 @@ fw_key getFirmwareKeyForComparator(std::string device, std::string buildnum, std
         retassure(bytes == 16 || bytes == 0, "IV has bad length. Expected=16 actual=%lld. Got IV=%s",bytes,rt.iv);
         if (!bytes) memset(rt.iv, 0, sizeof(rt.iv)); //indicate no key required
         hexToInts(rt.key, &tkey, &bytes);
-        retassure(bytes == 32 || bytes == 0, "KEY has bad length. Expected=32 actual=%lld. Got KEY=%s",bytes,rt.key);
+        retassure(bytes == 32  || bytes == 16 || bytes == 0, "KEY has bad length. Expected 32 or 16 actual=%lld. Got KEY=%s",bytes,rt.key);
         if (!bytes) memset(rt.key, 0, sizeof(rt.key)); //indicate no key required
     }
     return rt;
 }
 
 
-fw_key libipatcher::getFirmwareKeyForComponent(std::string device, std::string buildnum, std::string component, uint64_t cpid, std::string zipURL){
+fw_key libipatcher::getFirmwareKeyForComponent(std::string device, std::string buildnum, std::string component, uint32_t cpid, std::string zipURL){
     if (component == "RestoreLogo")
         component = "AppleLogo";
     else if (component == "RestoreRamDisk")
@@ -430,7 +430,7 @@ fw_key libipatcher::getFirmwareKeyForComponent(std::string device, std::string b
     }, cpid, zipURL);
 }
 
-fw_key libipatcher::getFirmwareKeyForPath(std::string device, std::string buildnum, std::string path, uint64_t cpid, std::string zipURL){
+fw_key libipatcher::getFirmwareKeyForPath(std::string device, std::string buildnum, std::string path, uint32_t cpid, std::string zipURL){
     return getFirmwareKeyForComparator(device, buildnum, [&path](const jssytok_t *e){
         jssytok_t *filename = jssy_dictGetValueForKey(e, "filename");
         assure(filename);
@@ -472,7 +472,7 @@ pair<char*,size_t>libipatcher::patchfile32(const char *ibss, size_t ibssSize, co
         assure(!patchfunc((char*)payload.data(), payload.size(), param));
     }
 
-    auto newpayload = img3tool::replaceDATAinIMG3({(uint8_t*)ibss,(uint8_t*)ibss+ibssSize}, payload, usedCompression);
+    auto newpayload = img3tool::replaceDATAinIMG3({ibss,ibssSize}, payload, usedCompression);
     newpayload = img3tool::removeTagFromIMG3(newpayload.data(), newpayload.size(), 'KBAG');
 
     patched = (char*)malloc(newpayload.size());
@@ -598,7 +598,7 @@ int iBoot32Patch(char *deciboot, size_t decibootSize, void *bootargs_) noexcept{
     }
 
     for (auto p : patches) {
-        patchfinder::patchfinder64::offset_t off = (patchfinder::patchfinder64::offset_t)(p._location - ibpf->find_base());
+        uint64_t off = (uint64_t)(p._location - ibpf->find_base());
         printf("%s: Applying patch=%p : ",__FUNCTION__,(void*)p._location);
         for (int i=0; i<p._patchSize; i++) {
             printf("%02x",((uint8_t*)p._patch)[i]);
@@ -688,7 +688,7 @@ int iBoot64Patch(char *deciboot, size_t decibootSize, void *bootargs_) noexcept{
     }
 
     for (auto p : patches) {
-        patchfinder::patchfinder64::offset_t off = (patchfinder::patchfinder64::offset_t)(p._location - ibpf->find_base());
+        uint64_t off = (uint64_t)(p._location - ibpf->find_base());
         printf("%s: Applying patch=%p : ",__FUNCTION__,(void*)p._location);
         for (int i=0; i<p._patchSize; i++) {
             printf("%02x",((uint8_t*)p._patch)[i]);
@@ -794,7 +794,7 @@ std::pair<char*,size_t>libipatcher::packIM4PToIMG4(const void *im4p, size_t im4p
 #endif //HAVE_IMG4TOOL
 }
 
-pwnBundle libipatcher::getPwnBundleForDevice(std::string device, std::string buildnum, uint64_t cpid, std::string zipURL){
+pwnBundle libipatcher::getPwnBundleForDevice(std::string device, std::string buildnum, uint32_t cpid, std::string zipURL){
     jssytok_t* tokens = NULL;
     cleanup([&]{
         safeFree(tokens);

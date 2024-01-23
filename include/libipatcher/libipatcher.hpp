@@ -13,6 +13,7 @@
 #include <exception>
 #include <functional>
 #include <iostream>
+#include <stdint.h>
 
 namespace tihmstar {
     namespace libipatcher {
@@ -27,9 +28,9 @@ namespace tihmstar {
             fw_key iBECKey;
         };
     
-        fw_key getFirmwareKeyForComponent(std::string device, std::string buildnum, std::string component, uint64_t cpid = 0, std::string zipURL = "");
-        fw_key getFirmwareKeyForPath(std::string device, std::string buildnum, std::string path, uint64_t cpid = 0, std::string zipURL = "");
-        pwnBundle getPwnBundleForDevice(std::string device, std::string buildnum = "", uint64_t cpid = 0, std::string zipURL = "");
+        fw_key getFirmwareKeyForComponent(std::string device, std::string buildnum, std::string component, uint32_t cpid = 0, std::string zipURL = "");
+        fw_key getFirmwareKeyForPath(std::string device, std::string buildnum, std::string path, uint32_t cpid = 0, std::string zipURL = "");
+        pwnBundle getPwnBundleForDevice(std::string device, std::string buildnum = "", uint32_t cpid = 0, std::string zipURL = "");
     
         std::pair<char*,size_t>decryptFile(const char *fbuf, size_t fbufSize, const fw_key &keys);
         std::pair<char*,size_t>extractKernel(const char *fbuf, size_t fbufSize, const fw_key &keys);
