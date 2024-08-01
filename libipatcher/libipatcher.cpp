@@ -600,11 +600,11 @@ int iBoot32Patch(char *deciboot, size_t decibootSize, void *bootargs_) noexcept{
     for (auto p : patches) {
         uint64_t off = (uint64_t)(p._location - ibpf->find_base());
         printf("%s: Applying patch=%p : ",__FUNCTION__,(void*)p._location);
-        for (int i=0; i<p._patchSize; i++) {
-            printf("%02x",((uint8_t*)p._patch)[i]);
+        for (int i=0; i<p.getPatchSize(); i++) {
+            printf("%02x",((uint8_t*)p.getPatch())[i]);
         }
         printf("\n");
-        memcpy(&deciboot[off], p._patch, p._patchSize);
+        memcpy(&deciboot[off], p.getPatch(), p.getPatchSize());
     }
     
     printf("%s: Patches applied!\n", __FUNCTION__);
@@ -690,11 +690,11 @@ int iBoot64Patch(char *deciboot, size_t decibootSize, void *bootargs_) noexcept{
     for (auto p : patches) {
         uint64_t off = (uint64_t)(p._location - ibpf->find_base());
         printf("%s: Applying patch=%p : ",__FUNCTION__,(void*)p._location);
-        for (int i=0; i<p._patchSize; i++) {
-            printf("%02x",((uint8_t*)p._patch)[i]);
+        for (int i=0; i<p.getPatchSize(); i++) {
+            printf("%02x",((uint8_t*)p.getPatch())[i]);
         }
         printf("\n");
-        memcpy(&deciboot[off], p._patch, p._patchSize);
+        memcpy(&deciboot[off], p.getPatch(), p.getPatchSize());
     }
     
     printf("%s: Patches applied!\n", __FUNCTION__);
