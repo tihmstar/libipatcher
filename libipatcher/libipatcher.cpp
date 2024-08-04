@@ -245,7 +245,7 @@ string libipatcher::getFirmwareJson(std::string device, std::string buildnum, ui
     std::string cpid_str;
     if (cpid) {
         char buf[0x100] = {};
-        snprintf(buf, sizeof(buf), "0x%llx/",cpid);
+        snprintf(buf, sizeof(buf), "0x%x/",cpid);
         cpid_str = buf;
     }
     
@@ -310,7 +310,7 @@ std::string libipatcher::getFirmwareJsonFromZip(std::string device, std::string 
     std::string cpid_str;
     if (cpid) {
         char buf[0x100] = {};
-        snprintf(buf, sizeof(buf), "0x%llx/",cpid);
+        snprintf(buf, sizeof(buf), "0x%x/",cpid);
         cpid_str = buf;
     }
 
