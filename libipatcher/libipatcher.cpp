@@ -39,9 +39,8 @@ extern "C" {
 #include "jssy.h"
 }
 
-#ifdef WITH_IPSW_ME_SUPPORT
-#define FIRMWARE_JSON_URL_START "https://firmware-keys.ipsw.me/firmware/"
-#define DEVICE_JSON_URL_START   "https://firmware-keys.ipsw.me/device/"
+#ifdef WITH_REMOTE_KEYS
+#define FIRMWARE_JSON_URL_START "https://raw.githubusercontent.com/tihmstar/fwkeydb/master/keys/firmware/"
 #endif
 
 #define bswap32 __builtin_bswap32
@@ -195,9 +194,12 @@ bool libipatcher::has64bitSupport(){
 }
 
 string libipatcher::getRemoteFile(std::string url){
+    CURL *mc = NULL;
+    cleanup([&]{
+        safeFreeCustom(mc, curl_easy_cleanup);
+    });
     string buf;
-    CURL *mc = curl_easy_init();
-    assure(mc);
+    assure(mc = curl_easy_init());
     
     curl_easy_setopt(mc, CURLOPT_URL, url.c_str());
     curl_easy_setopt(mc, CURLOPT_USERAGENT, "libipatcher/" VERSION_COMMIT_COUNT " APIKEY=" VERSION_COMMIT_SHA);
@@ -208,11 +210,11 @@ string libipatcher::getRemoteFile(std::string url){
     curl_easy_setopt(mc, CURLOPT_WRITEDATA, &buf);
     
     assure(curl_easy_perform(mc) == CURLE_OK);
-    long http_code = 0;
-    curl_easy_getinfo (mc, CURLINFO_RESPONSE_CODE, &http_code);
-    assure(http_code == 200);
-    
-    curl_easy_cleanup(mc);
+    {
+        long http_code = 0;
+        curl_easy_getinfo (mc, CURLINFO_RESPONSE_CODE, &http_code);
+        assure(http_code == 200);
+    }
     return buf;
 }
 
@@ -251,7 +253,7 @@ string libipatcher::getFirmwareJson(std::string device, std::string buildnum, ui
     
     {
         //try localhost
-        string url("localhost:8888/firmware/");
+        string url("http://localhost:8888/firmware/");
         url += device + "/";
         if (cpid_str.size()) {
             try {return getRemoteFile(url + cpid_str + buildnum);} catch (...) {}
@@ -351,7 +353,7 @@ string libipatcher::getDeviceJsonFromZip(std::string device, std::string zipURL)
 #endif //HAVE_LIBFRAGMENTZIP
 
 
-fw_key getFirmwareKeyForComparator(std::string device, std::string buildnum, std::function<bool(const jssytok_t *e)> comparator, uint32_t cpid, std::string zipURL){
+fw_key getFirmwareKeyForComparator(std::string device, std::string buildnum, std::function<bool(const jssytok_t *e, std::string apiversion)> comparator, uint32_t cpid, std::string zipURL){
     jssytok_t* tokens = NULL;
     unsigned int * tkey = NULL;
     unsigned int * tiv = NULL;
@@ -362,6 +364,7 @@ fw_key getFirmwareKeyForComparator(std::string device, std::string buildnum, std
     });
     fw_key rt = {0};
     long tokensCnt = 0;
+    std::string apiversion;
 
 #ifdef HAVE_LIBFRAGMENTZIP
     string json = (zipURL.size()) ? getFirmwareJsonFromZip(device, buildnum, zipURL, cpid) : getFirmwareJson(device, buildnum, cpid);
@@ -376,16 +379,25 @@ fw_key getFirmwareKeyForComparator(std::string device, std::string buildnum, std
     jssytok_t *keys = jssy_dictGetValueForKey(tokens, "keys");
     assure(keys);
     
+    {
+        jssytok_t *apivers = jssy_dictGetValueForKey(tokens, "version");
+        if (apivers){
+            retassure(apivers->type == JSSY_STRING, "Got version, but not string!");
+            apiversion = {apivers->value,apivers->value+apivers->size};
+        }
+    }
+    
     jssytok_t *iv = NULL;
     jssytok_t *key = NULL;
     jssytok_t *path = NULL;
 
     jssytok_t *tmp = keys->subval;
     for (size_t i=0; i<keys->size; tmp=tmp->next, i++) {
-        if (comparator(tmp)){
-            iv = jssy_dictGetValueForKey(tmp, "iv");
-            key = jssy_dictGetValueForKey(tmp, "key");
-            path = jssy_dictGetValueForKey(tmp, "filename");
+        jssytok_t *tmpV = (tmp->type == JSSY_DICT_KEY) ? tmp->subval : tmp;
+        if (comparator(tmpV, apiversion)){
+            iv = jssy_dictGetValueForKey(tmpV, "iv");
+            key = jssy_dictGetValueForKey(tmpV, "key");
+            path = jssy_dictGetValueForKey(tmpV, "filename");
             break;
         }
     }
@@ -423,15 +435,26 @@ fw_key libipatcher::getFirmwareKeyForComponent(std::string device, std::string b
     else if (component == "RestoreKernelCache")
         component = "Kernelcache";
     
-    return getFirmwareKeyForComparator(device, buildnum, [&component](const jssytok_t *e){
-        jssytok_t *image = jssy_dictGetValueForKey(e, "image");
-        assure(image);
-        return strncmp(component.c_str(), image->value, image->size) == 0;
+    return getFirmwareKeyForComparator(device, buildnum, [&component](const jssytok_t *e, std::string apiversion)->bool{
+        if (apiversion == "1.0") {
+            jssytok_t *names = jssy_dictGetValueForKey(e, "names");
+            jssytok_t *name = names->subval;
+            for (size_t i=0; i<names->size; name=name->next, i++) {
+                if (strncmp(component.c_str(), name->value, name->size) == 0) {
+                    return true;
+                }
+            }
+            return false;
+        }else{
+            jssytok_t *image = jssy_dictGetValueForKey(e, "image");
+            assure(image);
+            return strncmp(component.c_str(), image->value, image->size) == 0;
+        }
     }, cpid, zipURL);
 }
 
 fw_key libipatcher::getFirmwareKeyForPath(std::string device, std::string buildnum, std::string path, uint32_t cpid, std::string zipURL){
-    return getFirmwareKeyForComparator(device, buildnum, [&path](const jssytok_t *e){
+    return getFirmwareKeyForComparator(device, buildnum, [&path](const jssytok_t *e, std::string apiversion){
         jssytok_t *filename = jssy_dictGetValueForKey(e, "filename");
         assure(filename);
         return strncmp(path.c_str(), filename->value, filename->size) == 0;
@@ -803,19 +826,6 @@ pwnBundle libipatcher::getPwnBundleForDevice(std::string device, std::string bui
 
     auto getKeys = [cpid,zipURL](std::string device, std::string curbuildnum)->pwnBundle{
         pwnBundle rt;
-#ifdef WITH_IPSW_ME_SUPPORT
-        string firmwareUrl = "https://api.ipsw.me/v2.1/";
-        firmwareUrl += device;
-        firmwareUrl += "/";
-        firmwareUrl += curbuildnum;
-        firmwareUrl += "/url/dl";
-        
-        try{
-            rt.firmwareUrl = getRemoteDestination(firmwareUrl);
-        }catch(...){
-            error("failed to get firmware url");
-        }
-#endif
         rt.iBSSKey = getFirmwareKeyForComponent(device, curbuildnum, "iBSS", cpid, zipURL);
         rt.iBECKey = getFirmwareKeyForComponent(device, curbuildnum, "iBEC", cpid, zipURL);
         return rt;

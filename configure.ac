@@ -76,11 +76,11 @@ AC_ARG_WITH([iBoot32Patcher],
             [with_ib32p=no],
             [with_ib32p=yes])
 
-AC_ARG_WITH([ipsw-me-support],
-            [AS_HELP_STRING([--without-ipsw-me-support],
-            [do not build with ipsw.me support @<:@default=no@:>@])],
-            [with_ipsw_me=no],
-            [with_ipsw_me=yes])
+AC_ARG_WITH([remote-keys],
+            [AS_HELP_STRING([--without-remote-keys],
+            [do not request firmware keys from remote public sources @<:@default=no@:>@])],
+            [with_remote_keys=no],
+            [with_remote_keys=yes])
 AC_ARG_ENABLE([debug],
             [AS_HELP_STRING([--enable-debug],
             [enable debug build(default is no)])],
@@ -95,8 +95,11 @@ AC_ARG_ENABLE([asan],
 
 AM_CONDITIONAL([WITH_IBOOT32PATCHER], [test x$with_ib32p = xyes])
 AM_CONDITIONAL([WITH_IBOOT64PATCHER], [test x$with_ib64p = xyes])
-AM_CONDITIONAL(WITH_IPSW_ME_SUPPORT, test "x$with_ipsw_me" = "xyes")
+AM_CONDITIONAL(WITH_REMOTE_KEYS, test "x$with_remote_keys" = "xyes")
 
+if test "x$with_remote_keys" = "xyes"; then
+  AC_DEFINE(WITH_REMOTE_KEYS, 1, [Define if you build with support for requesting keys from remote public database])
+fi
 
 if test "x$with_libfragmentzip" == "xyes"; then
   if test "x$have_libfragmentzip" != "xyes"; then
@@ -181,7 +184,7 @@ Configuration for $PACKAGE-$VERSION:
   with iBoot32Patcher .....: $with_ib32p
   with iBoot64Patcher .....: $with_ib64p
   with libfragmentzip .....: $with_libfragmentzip
-  with ipsw.me support ....: $with_ipsw_me
+  with remote keys ........: $with_remote_keys
   debug build  ............: $debug_build
   asan build  .............: $asan_build"
 
