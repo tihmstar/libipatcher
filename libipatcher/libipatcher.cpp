@@ -41,6 +41,9 @@ extern "C" {
 
 #ifdef WITH_REMOTE_KEYS
 #define FIRMWARE_JSON_URL_START "https://raw.githubusercontent.com/tihmstar/fwkeydb/master/keys/firmware/"
+#define FWKEYDB_LATEST_RELESES "https://api.github.com/repos/tihmstar/fwkeydb/releases/latest"
+#define FWKEYDB_KBAGMAP_TEMPLATE_STR "https://github.com/tihmstar/fwkeydb/releases/download/%s/KBAGMap.zip"
+#define FWKEYDB_KBAGMAP_FILE "KBAGMap.json"
 #endif
 
 #define bswap32 __builtin_bswap32
@@ -424,6 +427,85 @@ fw_key getFirmwareKeyForComparator(std::string device, std::string buildnum, std
     return rt;
 }
 
+static std::string getLatestfwkeydbRelease(){
+    static std::string ret;
+    if (!ret.size()){
+#ifndef FWKEYDB_LATEST_RELESES
+    reterror("Compiled without getLatestfwkeydbRelease support");
+#endif
+        jssytok_t* tokens = NULL;
+        cleanup([&]{
+            safeFree(tokens);
+        });
+        long tokensCnt = 0;
+
+        auto json = getRemoteFile(FWKEYDB_LATEST_RELESES);
+
+        retassure((tokensCnt = jssy_parse(json.c_str(), json.size(), NULL, 0)) > 0, "failed to parse json");
+        assure(tokens = (jssytok_t*)malloc(sizeof(jssytok_t)*tokensCnt));
+        assure(jssy_parse(json.c_str(), json.size(), tokens, tokensCnt * sizeof(jssytok_t)) == tokensCnt);
+        
+        jssytok_t *tagname = jssy_dictGetValueForKey(tokens, "tag_name");
+        assure(tagname);
+        assure(tagname->type == JSSY_STRING && tagname->size > 0);
+        ret = {tagname->value, tagname->value+tagname->size};
+    }
+        
+    return ret;
+}
+
+fw_key libipatcher::getFirmwareKeyForKBAG(std::string kbag){
+#ifndef HAVE_LIBFRAGMENTZIP
+    reterror("compiled without libfragmentzip");
+#else
+    int err = 0;
+    fragmentzip_t *fz = NULL;
+    char *outBuf = NULL;
+    jssytok_t* tokens = NULL;
+    cleanup([&]{
+        safeFree(tokens);
+        safeFree(outBuf);
+        safeFreeCustom(fz, fragmentzip_close);
+    });
+    size_t outBufSize = 0;
+    long tokensCnt = 0;
+    jssytok_t *tgt = NULL;
+    char kbagmapurl[sizeof(FWKEYDB_KBAGMAP_TEMPLATE_STR) + 20] = {};
+    
+    auto lastFWKeyDBRelease = getLatestfwkeydbRelease();
+    
+    retassure(snprintf(kbagmapurl, sizeof(kbagmapurl), FWKEYDB_KBAGMAP_TEMPLATE_STR,lastFWKeyDBRelease.c_str()) < sizeof(kbagmapurl), "kbagmapurl buf too small");
+    
+    retassure(fz = fragmentzip_open(kbagmapurl), "Failed to open kbagmapurl '%s'",kbagmapurl);
+    retassure(!(err = fragmentzip_download_to_memory(fz, FWKEYDB_KBAGMAP_FILE, &outBuf, &outBufSize, NULL)), "Failed to get %s from zip with err=%d",FWKEYDB_KBAGMAP_FILE,err);
+
+    retassure((tokensCnt = jssy_parse(outBuf, outBufSize, NULL, 0)) > 0, "failed to parse json");
+    assure(tokens = (jssytok_t*)malloc(sizeof(jssytok_t)*tokensCnt));
+    assure(jssy_parse(outBuf, outBufSize, tokens, tokensCnt * sizeof(jssytok_t)) == tokensCnt);
+
+    retassure(tgt = jssy_dictGetValueForKey(tokens, kbag.c_str()), "Failed to find IV/Key for KBAG '%s'",kbag.c_str());
+    
+    {
+        fw_key rt = {};
+        jssytok_t *iv = NULL;
+        jssytok_t *key = NULL;
+
+        iv = jssy_dictGetValueForKey(tgt, "iv");
+        key = jssy_dictGetValueForKey(tgt, "key");
+
+        assure(iv && key);
+        
+        assure(iv->size <= sizeof(rt.iv));
+        assure(key->size <= sizeof(rt.key));
+        memcpy(rt.iv, iv->value, iv->size);
+        memcpy(rt.key, key->value, key->size);
+        rt.iv[sizeof(rt.iv)-1] = 0;
+        rt.key[sizeof(rt.key)-1] = 0;
+        
+        return rt;
+    }
+#endif
+}
 
 fw_key libipatcher::getFirmwareKeyForComponent(std::string device, std::string buildnum, std::string component, uint32_t cpid, std::string zipURL){
     if (component == "RestoreLogo")

@@ -28,6 +28,7 @@ namespace tihmstar {
             fw_key iBECKey;
         };
     
+        fw_key getFirmwareKeyForKBAG(std::string kbag);
         fw_key getFirmwareKeyForComponent(std::string device, std::string buildnum, std::string component, uint32_t cpid = 0, std::string zipURL = "");
         fw_key getFirmwareKeyForPath(std::string device, std::string buildnum, std::string path, uint32_t cpid = 0, std::string zipURL = "");
         pwnBundle getPwnBundleForDevice(std::string device, std::string buildnum = "", uint32_t cpid = 0, std::string zipURL = "");
